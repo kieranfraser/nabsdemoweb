@@ -6,23 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <link rel="shortcut icon" type="image/ico" href="favicon.png" />
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="./common/dist/css/components.css">
+    <link rel="stylesheet" href="./common/dist/css/icons.css">
+    <link rel="stylesheet" href="./common/dist/css/responsee.css">
 
     <title>ng2do</title>
+    <style>
+      body {
+        background-color: orangered;
+      }
+    </style>
   </head>
   <body>
 
     <app></app>
 
-    
+
     <script src="./systemjs/dist/system.js?rev=@@hash"></script>
     <script src="./reflect-metadata/Reflect.js?rev=@@hash"></script>
     <script src="./zone.js/dist/zone.js?rev=@@hash"></script>
     <script src="./config.js?rev=@@hash"></script>
-    
 
     <script>
       System.import("./index.js");
     </script>
+
+    <script src="./common/dist/js/jquery-1.8.3.min.js"></script>
+    <script src="./common/dist/js/jquery-ui.min.js"></script>
+    <script src="./common/dist/js/responsee.js"></script>
 
   </body>
 </html>

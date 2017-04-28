@@ -10,51 +10,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var todo_service_1 = require("../services/todo-service");
 var angularfire2_1 = require("angularfire2");
+require("rxjs/add/operator/take");
+var router_1 = require("@angular/router");
 var TodoCmp = (function () {
-    function TodoCmp(_todoService, af) {
-        this._todoService = _todoService;
-        this.title = "ng2do";
-        this.todos = [];
-        this.todoForm = {
-            "todoMessage": ""
-        };
-        this.messages = af.database.list("users/");
-        console.log(this.messages);
-        var itemObservable = af.database.object('/item');
-        itemObservable.set({ name: 'new name!' });
+    function TodoCmp(af, router) {
+        var _this = this;
+        this.router = router;
+        this.title = "NAbs";
+        this.item = null;
+        this.users = [];
+        this.isRequesting = true;
+        af.database.list("web/users/").subscribe(function (data) {
+            for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
+                var val = data_1[_i];
+                _this.users.push(val);
+            }
+            _this.router.navigate(['/home']);
+        });
     }
     TodoCmp.prototype.ngOnInit = function () {
-        this._getAll();
-    };
-    TodoCmp.prototype._getAll = function () {
-        var _this = this;
-        this._todoService
-            .getAll()
-            .subscribe(function (todos) {
-            _this.todos = todos;
-        });
-    };
-    TodoCmp.prototype.add = function (message) {
-        var _this = this;
-        this._todoService
-            .add(message)
-            .subscribe(function (m) {
-            _this.todos.push(m);
-            _this.todoForm.todoMessage = "";
-        });
-    };
-    TodoCmp.prototype.remove = function (id) {
-        var _this = this;
-        this._todoService
-            .remove(id)
-            .subscribe(function () {
-            _this.todos.forEach(function (t, i) {
-                if (t._id === id)
-                    return _this.todos.splice(i, 1);
-            });
-        });
     };
     return TodoCmp;
 }());
@@ -64,6 +39,6 @@ TodoCmp = __decorate([
         templateUrl: "todo/templates/todo.html",
         styleUrls: ["todo/styles/todo.css"]
     }),
-    __metadata("design:paramtypes", [todo_service_1.TodoService, angularfire2_1.AngularFire])
+    __metadata("design:paramtypes", [angularfire2_1.AngularFire, router_1.Router])
 ], TodoCmp);
 exports.TodoCmp = TodoCmp;

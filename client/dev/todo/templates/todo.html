@@ -1,25 +1,18 @@
-<div class="todo-container">
-  <form class="todo-form"
-        (submit)="add(todoForm.todoMessage)">
+<!--<div class="todo-container">
+  <form class="todo-form">
 
     <h1 class="todo-title">{{title}}</h1>
 
-    <input type="text"
-           name="todoMessage"
-           [(ngModel)]="todoForm.todoMessage"
-           [class.todo-error]="!todoForm.todoMessage.length"
-           placeholder="What do you have todo?"
-           autofocus />
 
-    <button type="submit"
-            [disabled]="!todoForm.todoMessage.length">+</button>
+    <button type="submit">+</button>
   </form>
 
-  <div class="todo-list">
-    <div *ngFor="let todo of todos;"
-         class="todo-item"
-         (click)="remove(todo._id);">
-      <p>{{todo.todoMessage}}</p>
-    </div>
+  <div class="todo-list" *ngFor="let user of users">
+    {{user.id != null ? user.id : "id missing"}}
   </div>
-</div>
+</div>-->
+<body>
+  <div id="wrapper">
+    <my-spinner [isRunning]="isRequesting"></my-spinner>
+  </div>
+</body>

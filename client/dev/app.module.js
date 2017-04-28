@@ -15,6 +15,10 @@ var todo_cmp_1 = require("./todo/components/todo-cmp");
 var todo_route_1 = require("./todo/components/todo-route");
 var todo_service_1 = require("./todo/services/todo-service");
 var angularfire2_1 = require("angularfire2");
+var home_cmp_1 = require("./home/components/home-cmp");
+var home_service_1 = require("./home/services/home-service");
+var home_route_1 = require("./home/components/home-route");
+var spinner_cmp_1 = require("./todo/components/spinner-cmp");
 exports.config = {
     apiKey: "AIzaSyBuH2Fjok4gt7ouDB2tz39DU51DFEaYcY0",
     authDomain: "nabsdemo.firebaseapp.com",
@@ -35,14 +39,19 @@ AppModule = __decorate([
             forms_1.FormsModule,
             http_1.HttpModule,
             todo_route_1.todoRouting,
-            angularfire2_1.AngularFireModule.initializeApp(exports.config)
+            home_route_1.homeRouting,
+            angularfire2_1.AngularFireModule.initializeApp(exports.config),
+            forms_1.FormsModule
         ],
         declarations: [
             app_1.App,
             todo_cmp_1.TodoCmp,
+            home_cmp_1.HomeCmp,
+            spinner_cmp_1.SpinnerComponent,
         ],
         providers: [
             todo_service_1.TodoService,
+            home_service_1.HomeService,
         ],
         bootstrap: [
             app_1.App,

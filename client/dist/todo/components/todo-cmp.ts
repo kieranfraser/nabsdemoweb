@@ -14,11 +14,10 @@ import {
 } from "../services/todo-service";
 
 import {AngularFire, AuthProviders, AuthMethods, FirebaseListObservable} from 'angularfire2';
-
-type Todo = {
-  todoMessage: string;
-  _id?: string;
-};
+import {FirebaseObjectObservable} from "angularfire2/index";
+import 'rxjs/add/operator/take';
+import {Router} from "@angular/router";
+import {SpinnerComponent} from "./spinner-cmp";
 
 @Component({
   selector: "todo-cmp",
@@ -26,51 +25,22 @@ type Todo = {
   styleUrls: ["todo/styles/todo.css"]
 })
 export class TodoCmp implements OnInit {
-  title: string = "ng2do";
-  todos: Todo[] = [];
-  todoForm: Todo;
+  title: string = "NAbs";
 
-  public messages: FirebaseListObservable<any>;
+  public item: any = null;
+  public users: any[] = [];
+  public isRequesting: boolean;
 
-  constructor(private _todoService: TodoService, af: AngularFire) {
-    this.todoForm = {
-      "todoMessage": ""
-    };
-    this.messages = af.database.list("users/");
-    console.log(this.messages);
-    const itemObservable = af.database.object('/item');
-    itemObservable.set({ name: 'new name!'});
+  constructor(af: AngularFire, private router: Router) {
+    this.isRequesting = true;
+    af.database.list("web/users/").subscribe(data=>{
+      for(var val of data){
+        this.users.push(val);
+      }
+      this.router.navigate(['/home']);
+    });
   }
 
   ngOnInit() {
-    this._getAll();
-  }
-
-  private _getAll(): void {
-    this._todoService
-        .getAll()
-        .subscribe((todos) => {
-          this.todos = todos;
-        });
-  }
-
-  add(message: string): void {
-    this._todoService
-        .add(message)
-        .subscribe((m) => {
-          this.todos.push(m);
-          this.todoForm.todoMessage = "";
-        });
-  }
-
-  remove(id: string): void {
-    this._todoService
-      .remove(id)
-      .subscribe(() => {
-        this.todos.forEach((t, i) => {
-          if (t._id === id)
-            return this.todos.splice(i, 1);
-        });
-      });
   }
 }
