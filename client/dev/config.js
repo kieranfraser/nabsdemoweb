@@ -21,17 +21,7 @@ System.config({
 
     // other libraries
     'rxjs':                       'npm:rxjs',
-    'angularfire2':               'npm:angularfire2',
-    'firebase':                   'npm:firebase'
-  },
-  packages: {
-    'angularfire2': {
-      main: './bundles/angularFire2.umd.js',
-      defaultExtension: 'js'
-    },
-    'firebase': {
-      main: './firebase.js',
-      defaultExtension: 'js'
-    }
+    'angularfire2':               'npm:angularfire2/bundles/angularfire2.umd.js',
+    'firebase':                   'npm:firebase/firebase.js'
   }
 });
