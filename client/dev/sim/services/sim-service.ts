@@ -19,12 +19,19 @@ import {Result} from "../model/result";
 @Injectable()
 export class SimService {
 
-  private baseUrl = 'https://nabsdemo.herokuapp.com/result';
+  //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
+  private baseUrlResult = 'http://localhost:8080/result';
+  private baseUrlParams = 'http://localhost:8080/params';
 
   constructor (@Inject(Http) private _http: Http) {}
 
   getResults(userId: string) : Observable<any> {
-    return this._http.get(this.baseUrl+"?user="+userId+"&notifId=something")
+    return this._http.get(this.baseUrlResult+"?user="+userId+"&notifId=something")
+      .map((r) => r.json());
+  }
+
+  getDefaultAlertParams() : Observable<any> {
+    return this._http.get(this.baseUrlParams+"?type=alert")
       .map((r) => r.json());
   }
 

@@ -221,7 +221,7 @@
                 </thead>
                 <tbody>
                 <tr class="pointer" *ngFor="let event of selectedUser?.events;">
-                  <div ngSwitch="{{event?.eventType}}">
+                  <div [ngSwitch]="event?.eventType">
                     <td *ngSwitchCase="0">Forward</td>
                     <td *ngSwitchCase="1">Enjoyed</td>
                     <td *ngSwitchCase="2">Cinema</td>

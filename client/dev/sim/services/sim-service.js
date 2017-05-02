@@ -19,10 +19,16 @@ require("rxjs/add/operator/catch");
 var SimService = (function () {
     function SimService(_http) {
         this._http = _http;
-        this.baseUrl = 'https://nabsdemo.herokuapp.com/result';
+        //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
+        this.baseUrlResult = 'http://localhost:8080/result';
+        this.baseUrlParams = 'http://localhost:8080/params';
     }
     SimService.prototype.getResults = function (userId) {
-        return this._http.get(this.baseUrl + "?user=" + userId + "&notifId=something")
+        return this._http.get(this.baseUrlResult + "?user=" + userId + "&notifId=something")
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.getDefaultAlertParams = function () {
+        return this._http.get(this.baseUrlParams + "?type=alert")
             .map(function (r) { return r.json(); });
     };
     return SimService;

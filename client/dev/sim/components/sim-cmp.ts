@@ -36,10 +36,29 @@ export class SimCmp implements OnInit {
   private users: any[];
   public isRequesting: boolean;
   private selectedUser:any = null;
-  private selectedNotification: any = null;
   private selectedImage: number = null;
 
   private allResults: Result[] = null;
+  private selectedUserEvents: any[] = null;
+
+  private alertParams: string[] = null;
+
+
+  private selectedNotification: any = null;
+  private selectedResult: string = null;
+
+  private alertSenderInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
+  "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
+  "VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP"];
+
+  private alertSubjectInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
+    "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
+    "VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP"];
+
+  private alertAppInputValues: string[] = ["NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
+    "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
+    "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP"];
+
 
   constructor(private af: AngularFire, private todoService: TodoService, private router: Router,
               private simService: SimService) {
@@ -62,6 +81,12 @@ export class SimCmp implements OnInit {
     if(this.selectedUser==null){
       this.router.navigate(['../home']);
     }
+
+    this.simService
+      .getDefaultAlertParams()
+      .subscribe((alertParams) => {
+        this.alertParams = alertParams;
+      });
   }
 
   notificationSelected(notification: any){
@@ -74,5 +99,10 @@ export class SimCmp implements OnInit {
       .subscribe((allResults) => {
         this.allResults = allResults;
       });
+  }
+
+  setNotification(notification: any, result: string){
+    this.selectedNotification = notification;
+    this.selectedResult = result;
   }
 }

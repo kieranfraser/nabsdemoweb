@@ -24,9 +24,21 @@ var SimCmp = (function () {
         this.simService = simService;
         this.title = "NAbs";
         this.selectedUser = null;
-        this.selectedNotification = null;
         this.selectedImage = null;
         this.allResults = null;
+        this.selectedUserEvents = null;
+        this.alertParams = null;
+        this.selectedNotification = null;
+        this.selectedResult = null;
+        this.alertSenderInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
+            "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
+            "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
+        this.alertSubjectInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
+            "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
+            "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
+        this.alertAppInputValues = ["NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
+            "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
+            "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP"];
         this.subscriptionOne = this.todoService.selectedUser$.subscribe(function (selectedUser) {
             _this.selectedUser = selectedUser;
             console.log("sel user");
@@ -38,10 +50,16 @@ var SimCmp = (function () {
         });
     }
     SimCmp.prototype.ngOnInit = function () {
+        var _this = this;
         console.log("init");
         if (this.selectedUser == null) {
             this.router.navigate(['../home']);
         }
+        this.simService
+            .getDefaultAlertParams()
+            .subscribe(function (alertParams) {
+            _this.alertParams = alertParams;
+        });
     };
     SimCmp.prototype.notificationSelected = function (notification) {
         this.selectedNotification = notification;
@@ -53,6 +71,10 @@ var SimCmp = (function () {
             .subscribe(function (allResults) {
             _this.allResults = allResults;
         });
+    };
+    SimCmp.prototype.setNotification = function (notification, result) {
+        this.selectedNotification = notification;
+        this.selectedResult = result;
     };
     return SimCmp;
 }());
