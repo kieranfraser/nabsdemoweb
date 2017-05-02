@@ -32,7 +32,7 @@
             <div *ngIf="selectedUser!=null" style="text-align: center; margin-top: 20px;">
               <img src="./common/dist/img/{{selectedImage}}.png" style="max-width: 100%;" alt="No user selected.">
               <div style="color: white; margin-top: 20px"><h4>Selected User</h4></div>
-              <button style="margin-top: 20px;" type="button" class="btn btn-primary">Fire All</button>
+              <button style="margin-top: 20px;" type="button" class="btn btn-primary" (click)="fireAllParams()">Fire All</button>
               <button style="margin-top: 20px;" type="button" class="btn btn-primary" (click)="fireAll()">Fire Single</button>
             </div>
           </div>
@@ -342,6 +342,7 @@
         <div class="modal-content">
           <div class="modal-header" style="text-align: center">
             <h2 class="modal-title pull-left">Control</h2>
+            <button type="button" class="btn btn-primary pull-left" (click)="checkAlertParams()" aria-label="Close"></button>
             <button type="button" class="close pull-right" (click)="lgModalControl.hide()" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -410,9 +411,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let val of alertParams; let i = index;">
-                  <td>
-                    {{val}}
+                <tr *ngFor="let val of alertParams; let i = index; trackBy:trackByIndex;">
+                  <td >
+                    <select [(ngModel)]="alertParams[i]"> <!-- <== changed -->
+                      <option *ngFor="let option of alertOptions;" [ngValue]="option" [selected]="option === alertParams[i]">{{option}}</option>
+                    </select>
                   </td>
                 </tr>
                 </tbody>

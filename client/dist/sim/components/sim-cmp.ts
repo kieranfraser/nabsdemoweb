@@ -51,13 +51,15 @@ export class SimCmp implements OnInit {
   "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
   "VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP"];
 
-  private alertSubjectInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
-    "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
-    "VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP"];
+  private alertSubjectInputValues: string[] = ["NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP",
+    "NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP",
+    "NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP"];
 
   private alertAppInputValues: string[] = ["NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
     "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
     "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP"];
+
+  private alertOptions: string[] = ["NOW", "VERYSOON", "SOON", "LATER", "MUCHLATER"];
 
 
   constructor(private af: AngularFire, private todoService: TodoService, private router: Router,
@@ -101,8 +103,24 @@ export class SimCmp implements OnInit {
       });
   }
 
+  fireAllParams(){
+    this.simService
+      .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
+      .subscribe((allResults)=> {
+        this.allResults = allResults;
+      });
+  }
+
   setNotification(notification: any, result: string){
     this.selectedNotification = notification;
     this.selectedResult = result;
+  }
+
+  trackByIndex(index: number, value: number) {
+    return index;
+  }
+
+  checkAlertParams(){
+    console.log(this.alertParams);
   }
 }

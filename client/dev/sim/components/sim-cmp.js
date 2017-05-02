@@ -33,12 +33,13 @@ var SimCmp = (function () {
         this.alertSenderInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
             "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
             "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
-        this.alertSubjectInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
-            "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
-            "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
+        this.alertSubjectInputValues = ["NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP",
+            "NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP",
+            "NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP"];
         this.alertAppInputValues = ["NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP"];
+        this.alertOptions = ["NOW", "VERYSOON", "SOON", "LATER", "MUCHLATER"];
         this.subscriptionOne = this.todoService.selectedUser$.subscribe(function (selectedUser) {
             _this.selectedUser = selectedUser;
             console.log("sel user");
@@ -72,9 +73,23 @@ var SimCmp = (function () {
             _this.allResults = allResults;
         });
     };
+    SimCmp.prototype.fireAllParams = function () {
+        var _this = this;
+        this.simService
+            .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
+            .subscribe(function (allResults) {
+            _this.allResults = allResults;
+        });
+    };
     SimCmp.prototype.setNotification = function (notification, result) {
         this.selectedNotification = notification;
         this.selectedResult = result;
+    };
+    SimCmp.prototype.trackByIndex = function (index, value) {
+        return index;
+    };
+    SimCmp.prototype.checkAlertParams = function () {
+        console.log(this.alertParams);
     };
     return SimCmp;
 }());

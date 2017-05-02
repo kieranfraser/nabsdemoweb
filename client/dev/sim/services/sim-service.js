@@ -22,9 +22,14 @@ var SimService = (function () {
         //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
         this.baseUrlResult = 'http://localhost:8080/result';
         this.baseUrlParams = 'http://localhost:8080/params';
+        this.baseUrlResultParams = 'http://localhost:8080/resultparams';
     }
     SimService.prototype.getResults = function (userId) {
         return this._http.get(this.baseUrlResult + "?user=" + userId + "&notifId=something")
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.getResultWithAlertParams = function (userId, alertParams) {
+        return this._http.get(this.baseUrlResultParams + "?user=" + userId + "&params=" + alertParams)
             .map(function (r) { return r.json(); });
     };
     SimService.prototype.getDefaultAlertParams = function () {
