@@ -12,11 +12,43 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var angularfire2_1 = require("angularfire2");
 require("rxjs/add/operator/take");
+var todo_service_1 = require("../../todo/services/todo-service");
+var router_1 = require("@angular/router");
 var HomeCmp = (function () {
-    function HomeCmp(af) {
+    function HomeCmp(af, todoService, router) {
+        this.af = af;
+        this.todoService = todoService;
+        this.router = router;
         this.title = "NAbs";
+        this.selectedUser = null;
+        this.selectedNotification = null;
+        this.selectedImage = null;
     }
     HomeCmp.prototype.ngOnInit = function () {
+        var _this = this;
+        this.subscription = this.todoService.users$.subscribe(function (users) {
+            _this.users = users;
+            if (_this.users.length == 0) {
+                _this.isRequesting = true;
+                _this.af.database.list("web/users/").subscribe(function (data) {
+                    for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
+                        var val = data_1[_i];
+                        _this.users.push(val);
+                    }
+                    _this.todoService.addUsers(_this.users);
+                    _this.isRequesting = false;
+                });
+            }
+        });
+    };
+    HomeCmp.prototype.selectUser = function (user, index) {
+        this.selectedUser = user;
+        this.selectedImage = index;
+        this.todoService.setSelectedUser(user);
+        this.todoService.setSelectedImage(index);
+    };
+    HomeCmp.prototype.notificationSelected = function (notification) {
+        this.selectedNotification = notification;
     };
     return HomeCmp;
 }());
@@ -26,6 +58,6 @@ HomeCmp = __decorate([
         templateUrl: "home/templates/home.html",
         styleUrls: ["home/styles/home.css"]
     }),
-    __metadata("design:paramtypes", [angularfire2_1.AngularFire])
+    __metadata("design:paramtypes", [angularfire2_1.AngularFire, todo_service_1.TodoService, router_1.Router])
 ], HomeCmp);
 exports.HomeCmp = HomeCmp;

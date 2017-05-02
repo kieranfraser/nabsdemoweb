@@ -27,20 +27,19 @@ import {SpinnerComponent} from "./spinner-cmp";
 export class TodoCmp implements OnInit {
   title: string = "NAbs";
 
-  public item: any = null;
   public users: any[] = [];
   public isRequesting: boolean;
 
-  constructor(af: AngularFire, private router: Router) {
+  constructor(af: AngularFire, private router: Router, private todoService:TodoService) {
     this.isRequesting = true;
     af.database.list("web/users/").subscribe(data=>{
       for(var val of data){
         this.users.push(val);
       }
+      this.todoService.addUsers(this.users);
       this.router.navigate(['/home']);
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 }

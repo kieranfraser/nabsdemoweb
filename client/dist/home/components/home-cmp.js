@@ -1,1 +1,63 @@
-"use strict";var __decorate=this&&this.__decorate||function(e,t,r,o){var a,n=arguments.length,c=n<3?t:null===o?o=Object.getOwnPropertyDescriptor(t,r):o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)c=Reflect.decorate(e,t,r,o);else for(var i=e.length-1;i>=0;i--)(a=e[i])&&(c=(n<3?a(c):n>3?a(t,r,c):a(t,r))||c);return n>3&&c&&Object.defineProperty(t,r,c),c},__metadata=this&&this.__metadata||function(e,t){if("object"==typeof Reflect&&"function"==typeof Reflect.metadata)return Reflect.metadata(e,t)};Object.defineProperty(exports,"__esModule",{value:!0});var core_1=require("@angular/core"),angularfire2_1=require("angularfire2");require("rxjs/add/operator/take");var HomeCmp=function(){function e(e){this.title="NAbs"}return e.prototype.ngOnInit=function(){},e}();HomeCmp=__decorate([core_1.Component({selector:"home-cmp",templateUrl:"home/templates/home.html",styleUrls:["home/styles/home.css"]}),__metadata("design:paramtypes",[angularfire2_1.AngularFire])],HomeCmp),exports.HomeCmp=HomeCmp;
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+var angularfire2_1 = require("angularfire2");
+require("rxjs/add/operator/take");
+var todo_service_1 = require("../../todo/services/todo-service");
+var router_1 = require("@angular/router");
+var HomeCmp = (function () {
+    function HomeCmp(af, todoService, router) {
+        this.af = af;
+        this.todoService = todoService;
+        this.router = router;
+        this.title = "NAbs";
+        this.selectedUser = null;
+        this.selectedNotification = null;
+        this.selectedImage = null;
+    }
+    HomeCmp.prototype.ngOnInit = function () {
+        var _this = this;
+        this.subscription = this.todoService.users$.subscribe(function (users) {
+            _this.users = users;
+            if (_this.users.length == 0) {
+                _this.isRequesting = true;
+                _this.af.database.list("web/users/").subscribe(function (data) {
+                    for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
+                        var val = data_1[_i];
+                        _this.users.push(val);
+                    }
+                    _this.todoService.addUsers(_this.users);
+                    _this.isRequesting = false;
+                });
+            }
+        });
+    };
+    HomeCmp.prototype.selectUser = function (user, index) {
+        this.selectedUser = user;
+        this.selectedImage = index;
+        this.todoService.setSelectedUser(user);
+        this.todoService.setSelectedImage(index);
+    };
+    HomeCmp.prototype.notificationSelected = function (notification) {
+        this.selectedNotification = notification;
+    };
+    return HomeCmp;
+}());
+HomeCmp = __decorate([
+    core_1.Component({
+        selector: "home-cmp",
+        templateUrl: "home/templates/home.html",
+        styleUrls: ["home/styles/home.css"]
+    }),
+    __metadata("design:paramtypes", [angularfire2_1.AngularFire, todo_service_1.TodoService, router_1.Router])
+], HomeCmp);
+exports.HomeCmp = HomeCmp;

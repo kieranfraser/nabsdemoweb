@@ -13,41 +13,31 @@ import {
 } from "@angular/http";
 
 import "rxjs/add/operator/map";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class TodoService {
-  static ENDPOINT: string = "/api/todos/:id";
 
-  constructor(@Inject(Http) private _http: Http) {
+  private users:Subject<any[]> = new BehaviorSubject<any[]>([]);
+  users$ = this.users.asObservable();
 
+  private selectedUser:Subject<any> = new BehaviorSubject<any>(null);
+  selectedUser$ = this.selectedUser.asObservable();
+
+  private selectedImage:Subject<number> = new BehaviorSubject<number>(0);
+  selectedImage$ = this.selectedImage.asObservable();
+
+  addUsers(users:any[]) {
+    this.users.next(users);
   }
 
-  getAll(): Observable<any> {
-    return this._http
-               .get(TodoService.ENDPOINT.replace(/:id/, ""))
-               .map((r) => r.json());
+  setSelectedUser(selUser: any){
+    this.selectedUser.next(selUser);
   }
 
-  getById(id: string):Observable<any> {
-    return this._http
-               .get(TodoService.ENDPOINT.replace(/:id/, id))
-               .map((r) => r.json());
+  setSelectedImage(selImage: any){
+    this.selectedImage.next(selImage);
   }
 
-  add(message: string): Observable<any> {
-    let _messageStringified = JSON.stringify({todoMessage: message});
-
-    let headers = new Headers();
-
-    headers.append("Content-Type", "application/json");
-
-    return this._http
-               .post(TodoService.ENDPOINT.replace(/:id/, ""), _messageStringified, {headers})
-               .map((r) => r.json());
-  }
-
-  remove(id: string): Observable<any> {
-    return this._http
-               .delete(TodoService.ENDPOINT.replace(/:id/, id));
-  }
 }

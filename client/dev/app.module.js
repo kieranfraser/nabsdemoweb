@@ -19,6 +19,10 @@ var home_cmp_1 = require("./home/components/home-cmp");
 var home_service_1 = require("./home/services/home-service");
 var home_route_1 = require("./home/components/home-route");
 var spinner_cmp_1 = require("./todo/components/spinner-cmp");
+var ngx_bootstrap_1 = require("ngx-bootstrap");
+var sim_service_1 = require("./sim/services/sim-service");
+var sim_cmp_1 = require("./sim/components/sim-cmp");
+var sim_route_1 = require("./sim/components/sim-route");
 exports.config = {
     apiKey: "AIzaSyBuH2Fjok4gt7ouDB2tz39DU51DFEaYcY0",
     authDomain: "nabsdemo.firebaseapp.com",
@@ -40,18 +44,22 @@ AppModule = __decorate([
             http_1.HttpModule,
             todo_route_1.todoRouting,
             home_route_1.homeRouting,
+            sim_route_1.simRouting,
             angularfire2_1.AngularFireModule.initializeApp(exports.config),
-            forms_1.FormsModule
+            forms_1.FormsModule,
+            ngx_bootstrap_1.ModalModule.forRoot(),
         ],
         declarations: [
             app_1.App,
             todo_cmp_1.TodoCmp,
             home_cmp_1.HomeCmp,
+            sim_cmp_1.SimCmp,
             spinner_cmp_1.SpinnerComponent,
         ],
         providers: [
             todo_service_1.TodoService,
             home_service_1.HomeService,
+            sim_service_1.SimService,
         ],
         bootstrap: [
             app_1.App,

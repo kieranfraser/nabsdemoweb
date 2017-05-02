@@ -1,1 +1,35 @@
-"use strict";var __decorate=this&&this.__decorate||function(e,t,r,o){var n,a=arguments.length,i=a<3?t:null===o?o=Object.getOwnPropertyDescriptor(t,r):o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)i=Reflect.decorate(e,t,r,o);else for(var c=e.length-1;c>=0;c--)(n=e[c])&&(i=(a<3?n(i):a>3?n(t,r,i):n(t,r))||i);return a>3&&i&&Object.defineProperty(t,r,i),i},__metadata=this&&this.__metadata||function(e,t){if("object"==typeof Reflect&&"function"==typeof Reflect.metadata)return Reflect.metadata(e,t)},__param=this&&this.__param||function(e,t){return function(r,o){t(r,o,e)}};Object.defineProperty(exports,"__esModule",{value:!0});var core_1=require("@angular/core"),http_1=require("@angular/http");require("rxjs/add/operator/map");var TodoService=TodoService_1=function(){function e(e){this._http=e}return e.prototype.getAll=function(){return this._http.get(TodoService_1.ENDPOINT.replace(/:id/,"")).map(function(e){return e.json()})},e.prototype.getById=function(e){return this._http.get(TodoService_1.ENDPOINT.replace(/:id/,e)).map(function(e){return e.json()})},e.prototype.add=function(e){var t=JSON.stringify({todoMessage:e}),r=new http_1.Headers;return r.append("Content-Type","application/json"),this._http.post(TodoService_1.ENDPOINT.replace(/:id/,""),t,{headers:r}).map(function(e){return e.json()})},e.prototype.remove=function(e){return this._http["delete"](TodoService_1.ENDPOINT.replace(/:id/,e))},e}();TodoService.ENDPOINT="/api/todos/:id",TodoService=TodoService_1=__decorate([core_1.Injectable(),__param(0,core_1.Inject(http_1.Http)),__metadata("design:paramtypes",[http_1.Http])],TodoService),exports.TodoService=TodoService;var TodoService_1;
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+require("rxjs/add/operator/map");
+var BehaviorSubject_1 = require("rxjs/BehaviorSubject");
+var TodoService = (function () {
+    function TodoService() {
+        this.users = new BehaviorSubject_1.BehaviorSubject([]);
+        this.users$ = this.users.asObservable();
+        this.selectedUser = new BehaviorSubject_1.BehaviorSubject(null);
+        this.selectedUser$ = this.selectedUser.asObservable();
+        this.selectedImage = new BehaviorSubject_1.BehaviorSubject(0);
+        this.selectedImage$ = this.selectedImage.asObservable();
+    }
+    TodoService.prototype.addUsers = function (users) {
+        this.users.next(users);
+    };
+    TodoService.prototype.setSelectedUser = function (selUser) {
+        this.selectedUser.next(selUser);
+    };
+    TodoService.prototype.setSelectedImage = function (selImage) {
+        this.selectedImage.next(selImage);
+    };
+    return TodoService;
+}());
+TodoService = __decorate([
+    core_1.Injectable()
+], TodoService);
+exports.TodoService = TodoService;

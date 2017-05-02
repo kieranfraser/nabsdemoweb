@@ -10,15 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
+var todo_service_1 = require("../services/todo-service");
 var angularfire2_1 = require("angularfire2");
 require("rxjs/add/operator/take");
 var router_1 = require("@angular/router");
 var TodoCmp = (function () {
-    function TodoCmp(af, router) {
+    function TodoCmp(af, router, todoService) {
         var _this = this;
         this.router = router;
+        this.todoService = todoService;
         this.title = "NAbs";
-        this.item = null;
         this.users = [];
         this.isRequesting = true;
         af.database.list("web/users/").subscribe(function (data) {
@@ -26,11 +27,11 @@ var TodoCmp = (function () {
                 var val = data_1[_i];
                 _this.users.push(val);
             }
+            _this.todoService.addUsers(_this.users);
             _this.router.navigate(['/home']);
         });
     }
-    TodoCmp.prototype.ngOnInit = function () {
-    };
+    TodoCmp.prototype.ngOnInit = function () { };
     return TodoCmp;
 }());
 TodoCmp = __decorate([
@@ -39,6 +40,6 @@ TodoCmp = __decorate([
         templateUrl: "todo/templates/todo.html",
         styleUrls: ["todo/styles/todo.css"]
     }),
-    __metadata("design:paramtypes", [angularfire2_1.AngularFire, router_1.Router])
+    __metadata("design:paramtypes", [angularfire2_1.AngularFire, router_1.Router, todo_service_1.TodoService])
 ], TodoCmp);
 exports.TodoCmp = TodoCmp;
