@@ -29,6 +29,7 @@ var SimCmp = (function () {
         this.selectedUserEvents = null;
         this.alertParams = null;
         this.selectedNotification = null;
+        this.selectedNotificationEvents = null;
         this.selectedResult = null;
         this.alertSenderInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
             "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
@@ -40,6 +41,7 @@ var SimCmp = (function () {
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP"];
         this.alertOptions = ["NOW", "VERYSOON", "SOON", "LATER", "MUCHLATER"];
+        this.defaultParams = null;
         this.subscriptionOne = this.todoService.selectedUser$.subscribe(function (selectedUser) {
             _this.selectedUser = selectedUser;
             console.log("sel user");
@@ -54,24 +56,27 @@ var SimCmp = (function () {
         var _this = this;
         console.log("init");
         if (this.selectedUser == null) {
-            this.router.navigate(['../home']);
+            this.router.navigate(['../']);
         }
-        this.simService
-            .getDefaultAlertParams()
-            .subscribe(function (alertParams) {
-            _this.alertParams = alertParams;
-        });
+        else {
+            this.simService
+                .getDefaultAlertParams()
+                .subscribe(function (resultParams) {
+                _this.alertParams = resultParams;
+                _this.simService
+                    .getDefaultAlertParams()
+                    .subscribe(function (resultParams) {
+                    _this.defaultParams = resultParams;
+                    _this.fireAllParams();
+                });
+            });
+        }
+    };
+    SimCmp.prototype.switchUser = function () {
+        this.router.navigate(['../']);
     };
     SimCmp.prototype.notificationSelected = function (notification) {
         this.selectedNotification = notification;
-    };
-    SimCmp.prototype.fireAll = function () {
-        var _this = this;
-        this.simService
-            .getResults(this.selectedUser.id)
-            .subscribe(function (allResults) {
-            _this.allResults = allResults;
-        });
     };
     SimCmp.prototype.fireAllParams = function () {
         var _this = this;
@@ -84,12 +89,47 @@ var SimCmp = (function () {
     SimCmp.prototype.setNotification = function (notification, result) {
         this.selectedNotification = notification;
         this.selectedResult = result;
+        this.getNotificationEvents();
     };
     SimCmp.prototype.trackByIndex = function (index, value) {
         return index;
     };
     SimCmp.prototype.checkAlertParams = function () {
+        console.log("Custom: ");
         console.log(this.alertParams);
+        console.log("Default: ");
+        console.log(this.defaultParams);
+    };
+    SimCmp.prototype.getNotificationEvents = function () {
+        var _this = this;
+        this.simService
+            .getNotificationEvents(this.selectedUser.id, this.selectedNotification.date)
+            .subscribe(function (eventResults) {
+            _this.selectedNotificationEvents = eventResults;
+            for (var _i = 0, _a = _this.selectedNotificationEvents; _i < _a.length; _i++) {
+                var event = _a[_i];
+                var d = new Date(event.endDate);
+                event.endDate = d;
+                d = new Date(event.startDate);
+                event.startDate = d;
+            }
+        });
+    };
+    SimCmp.prototype.resetParams = function () {
+        var _this = this;
+        this.simService
+            .getDefaultAlertParams()
+            .subscribe(function (resultParams) {
+            _this.alertParams = resultParams;
+        });
+    };
+    SimCmp.prototype.checkCustomRules = function () {
+        for (var i = 0; i < this.alertParams.length; i++) {
+            if (this.alertParams[i] != this.defaultParams[i]) {
+                return true;
+            }
+        }
+        return false;
     };
     return SimCmp;
 }());

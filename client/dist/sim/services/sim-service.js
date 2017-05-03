@@ -1,1 +1,46 @@
-"use strict";var __decorate=this&&this.__decorate||function(t,e,r,a){var s,o=arguments.length,i=o<3?e:null===a?a=Object.getOwnPropertyDescriptor(e,r):a;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)i=Reflect.decorate(t,e,r,a);else for(var n=t.length-1;n>=0;n--)(s=t[n])&&(i=(o<3?s(i):o>3?s(e,r,i):s(e,r))||i);return o>3&&i&&Object.defineProperty(e,r,i),i},__metadata=this&&this.__metadata||function(t,e){if("object"==typeof Reflect&&"function"==typeof Reflect.metadata)return Reflect.metadata(t,e)},__param=this&&this.__param||function(t,e){return function(r,a){e(r,a,t)}};Object.defineProperty(exports,"__esModule",{value:!0});var core_1=require("@angular/core"),http_1=require("@angular/http");require("rxjs/add/operator/map"),require("rxjs/add/operator/catch");var SimService=function(){function t(t){this._http=t,this.baseUrlResult="http://localhost:8080/result",this.baseUrlParams="http://localhost:8080/params",this.baseUrlResultParams="http://localhost:8080/resultparams"}return t.prototype.getResults=function(t){return this._http.get(this.baseUrlResult+"?user="+t+"&notifId=something").map(function(t){return t.json()})},t.prototype.getResultWithAlertParams=function(t,e){return this._http.get(this.baseUrlResultParams+"?user="+t+"&params="+e).map(function(t){return t.json()})},t.prototype.getDefaultAlertParams=function(){return this._http.get(this.baseUrlParams+"?type=alert").map(function(t){return t.json()})},t}();SimService=__decorate([core_1.Injectable(),__param(0,core_1.Inject(http_1.Http)),__metadata("design:paramtypes",[http_1.Http])],SimService),exports.SimService=SimService;
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+var http_1 = require("@angular/http");
+require("rxjs/add/operator/map");
+require("rxjs/add/operator/catch");
+var SimService = (function () {
+    function SimService(_http) {
+        this._http = _http;
+        //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
+        this.baseUrlResult = 'http://localhost:8080/result';
+        this.baseUrlParams = 'http://localhost:8080/params';
+        this.baseUrlResultParams = 'http://localhost:8080/resultparams';
+    }
+    SimService.prototype.getResults = function (userId) {
+        return this._http.get(this.baseUrlResult + "?user=" + userId + "&notifId=something")
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.getResultWithAlertParams = function (userId, alertParams) {
+        return this._http.get(this.baseUrlResultParams + "?user=" + userId + "&params=" + alertParams)
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.getDefaultAlertParams = function () {
+        return this._http.get(this.baseUrlParams + "?type=alert")
+            .map(function (r) { return r.json(); });
+    };
+    return SimService;
+}());
+SimService = __decorate([
+    core_1.Injectable(),
+    __param(0, core_1.Inject(http_1.Http)),
+    __metadata("design:paramtypes", [http_1.Http])
+], SimService);
+exports.SimService = SimService;

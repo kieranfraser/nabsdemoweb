@@ -16,20 +16,11 @@ require("rxjs/add/operator/take");
 var router_1 = require("@angular/router");
 var TodoCmp = (function () {
     function TodoCmp(af, router, todoService) {
-        var _this = this;
         this.router = router;
         this.todoService = todoService;
         this.title = "NAbs";
         this.users = [];
         this.isRequesting = true;
-        af.database.list("web/users/").subscribe(function (data) {
-            for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
-                var val = data_1[_i];
-                _this.users.push(val);
-            }
-            _this.todoService.addUsers(_this.users);
-            _this.router.navigate(['/home']);
-        });
     }
     TodoCmp.prototype.ngOnInit = function () { };
     return TodoCmp;

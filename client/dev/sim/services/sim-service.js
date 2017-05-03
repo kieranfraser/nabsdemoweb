@@ -23,6 +23,7 @@ var SimService = (function () {
         this.baseUrlResult = 'http://localhost:8080/result';
         this.baseUrlParams = 'http://localhost:8080/params';
         this.baseUrlResultParams = 'http://localhost:8080/resultparams';
+        this.baseUrlNotifEvents = 'http://localhost:8080/notificationevents';
     }
     SimService.prototype.getResults = function (userId) {
         return this._http.get(this.baseUrlResult + "?user=" + userId + "&notifId=something")
@@ -34,6 +35,10 @@ var SimService = (function () {
     };
     SimService.prototype.getDefaultAlertParams = function () {
         return this._http.get(this.baseUrlParams + "?type=alert")
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.getNotificationEvents = function (userId, date) {
+        return this._http.get(this.baseUrlNotifEvents + "?user=" + userId + "&date=" + date)
             .map(function (r) { return r.json(); });
     };
     return SimService;

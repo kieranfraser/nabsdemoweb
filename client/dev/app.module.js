@@ -51,8 +51,8 @@ AppModule = __decorate([
         ],
         declarations: [
             app_1.App,
-            todo_cmp_1.TodoCmp,
             home_cmp_1.HomeCmp,
+            todo_cmp_1.TodoCmp,
             sim_cmp_1.SimCmp,
             spinner_cmp_1.SpinnerComponent,
         ],

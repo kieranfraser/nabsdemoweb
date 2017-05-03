@@ -23,6 +23,7 @@ export class SimService {
   private baseUrlResult = 'http://localhost:8080/result';
   private baseUrlParams = 'http://localhost:8080/params';
   private baseUrlResultParams = 'http://localhost:8080/resultparams';
+  private baseUrlNotifEvents = 'http://localhost:8080/notificationevents';
 
   constructor (@Inject(Http) private _http: Http) {}
 
@@ -38,6 +39,11 @@ export class SimService {
 
   getDefaultAlertParams() : Observable<any> {
     return this._http.get(this.baseUrlParams+"?type=alert")
+      .map((r) => r.json());
+  }
+
+  getNotificationEvents(userId: string, date: string) : Observable<any> {
+    return this._http.get(this.baseUrlNotifEvents+"?user="+userId+"&date="+date)
       .map((r) => r.json());
   }
 

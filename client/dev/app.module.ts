@@ -44,8 +44,8 @@ export const config = {
     ],
     declarations: [
       App,
-      TodoCmp,
       HomeCmp,
+      TodoCmp,
       SimCmp,
       SpinnerComponent,
     ],

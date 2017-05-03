@@ -3,7 +3,7 @@
     <div class="line">
       <div id="content-wrapper" style="margin-left: 25%; margin-right: 25%; min-height: 98vh;">
         <!-- LEFT COLUMN -->
-        <div class="s-12 m-4 l-3" style="max-height: 98vh; overflow: hidden">
+        <div class="s-12 m-4 l-3" style="max-height: 98vh; min-height: 98vh; overflow: hidden; position: relative;">
           <div class="logo-box">
             <h1>NAbs Demo</h1>
           </div>
@@ -34,6 +34,19 @@
               <div style="color: white; margin-top: 20px"><h4>Selected User</h4></div>
               <button style="margin-top: 20px;" type="button" class="btn btn-primary" [routerLink]="['../simulation']">Simulate</button>
             </div>
+          </div>
+
+          <!-- FOOTER -->
+          <div class="box footer" style="background: none repeat scroll 0 0 #252d30; color: white; position: absolute; bottom: 0;">
+            <footer class="line">
+              <div class="s-12 l-6">
+                <p>User icons: designed by Roundicons from Flaticon</p>
+                <p id="copyright" property="dc:rights">&copy;
+                  <span property="dc:dateCopyrighted">2017</span>
+                  <span property="dc:publisher">Kieran Fraser, ADAPT Centre</span>
+                </p>
+              </div>
+            </footer>
           </div>
         </div>
         <!-- RIGHT COLUMN -->
@@ -86,18 +99,6 @@
                 </div>
               </article>
             </section>
-          </div>
-          <!-- FOOTER -->
-          <div class="box footer">
-            <footer class="line">
-              <div class="s-12 l-6">
-                <p>Copyright 2016, Vision Design - graphic zoo<br />The background image is purchased from Depositphotos. Do not use the image in your website.</p>
-                <p>User icons: designed by Roundicons from Flaticon</p>
-              </div>
-              <div class="s-12 l-6">
-                <a class="right" href="http://www.myresponsee.com" title="Responsee - lightweight responsive framework">Design and coding by Responsee Team</a>
-              </div>
-            </footer>
           </div>
         </div>
       </div>

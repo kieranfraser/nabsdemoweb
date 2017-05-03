@@ -4,7 +4,7 @@ var router_1 = require("@angular/router");
 var home_cmp_1 = require("../components/home-cmp");
 var homeRoutes = [
     {
-        path: "home",
+        path: "",
         component: home_cmp_1.HomeCmp,
         pathMatch: "full"
     }

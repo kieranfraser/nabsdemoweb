@@ -32,13 +32,6 @@ export class TodoCmp implements OnInit {
 
   constructor(af: AngularFire, private router: Router, private todoService:TodoService) {
     this.isRequesting = true;
-    af.database.list("web/users/").subscribe(data=>{
-      for(var val of data){
-        this.users.push(val);
-      }
-      this.todoService.addUsers(this.users);
-      this.router.navigate(['/home']);
-    });
   }
 
   ngOnInit() {}

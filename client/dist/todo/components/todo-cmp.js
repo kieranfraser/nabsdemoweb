@@ -1,1 +1,45 @@
-"use strict";var __decorate=this&&this.__decorate||function(e,t,r,o){var a,s=arguments.length,i=s<3?t:null===o?o=Object.getOwnPropertyDescriptor(t,r):o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)i=Reflect.decorate(e,t,r,o);else for(var c=e.length-1;c>=0;c--)(a=e[c])&&(i=(s<3?a(i):s>3?a(t,r,i):a(t,r))||i);return s>3&&i&&Object.defineProperty(t,r,i),i},__metadata=this&&this.__metadata||function(e,t){if("object"==typeof Reflect&&"function"==typeof Reflect.metadata)return Reflect.metadata(e,t)};Object.defineProperty(exports,"__esModule",{value:!0});var core_1=require("@angular/core"),todo_service_1=require("../services/todo-service"),angularfire2_1=require("angularfire2");require("rxjs/add/operator/take");var router_1=require("@angular/router"),TodoCmp=function(){function e(e,t,r){var o=this;this.router=t,this.todoService=r,this.title="NAbs",this.users=[],this.isRequesting=!0,e.database.list("web/users/").subscribe(function(e){for(var t=0,r=e;t<r.length;t++){var a=r[t];o.users.push(a)}o.todoService.addUsers(o.users),o.router.navigate(["/home"])})}return e.prototype.ngOnInit=function(){},e}();TodoCmp=__decorate([core_1.Component({selector:"todo-cmp",templateUrl:"todo/templates/todo.html",styleUrls:["todo/styles/todo.css"]}),__metadata("design:paramtypes",[angularfire2_1.AngularFire,router_1.Router,todo_service_1.TodoService])],TodoCmp),exports.TodoCmp=TodoCmp;
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+var todo_service_1 = require("../services/todo-service");
+var angularfire2_1 = require("angularfire2");
+require("rxjs/add/operator/take");
+var router_1 = require("@angular/router");
+var TodoCmp = (function () {
+    function TodoCmp(af, router, todoService) {
+        var _this = this;
+        this.router = router;
+        this.todoService = todoService;
+        this.title = "NAbs";
+        this.users = [];
+        this.isRequesting = true;
+        af.database.list("web/users/").subscribe(function (data) {
+            for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
+                var val = data_1[_i];
+                _this.users.push(val);
+            }
+            _this.todoService.addUsers(_this.users);
+            _this.router.navigate(['/home']);
+        });
+    }
+    TodoCmp.prototype.ngOnInit = function () { };
+    return TodoCmp;
+}());
+TodoCmp = __decorate([
+    core_1.Component({
+        selector: "todo-cmp",
+        templateUrl: "todo/templates/todo.html",
+        styleUrls: ["todo/styles/todo.css"]
+    }),
+    __metadata("design:paramtypes", [angularfire2_1.AngularFire, router_1.Router, todo_service_1.TodoService])
+], TodoCmp);
+exports.TodoCmp = TodoCmp;
