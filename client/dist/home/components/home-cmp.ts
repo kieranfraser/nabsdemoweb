@@ -44,13 +44,18 @@ export class HomeCmp implements OnInit {
         this.users = users;
         if(this.users.length == 0){
           this.isRequesting = true;
-          this.af.database.list("web/users/").subscribe(data=>{
+          /*this.af.database.list("web/users/").subscribe(data=>{
             for(var val of data){
               this.users.push(val);
             }
             this.todoService.addUsers(this.users);
             this.isRequesting = false;
-          });
+          });*/
+          this.todoService
+            .getUsers()
+            .subscribe((users)=> {
+              this.users = users;
+            });
         }
 
       });

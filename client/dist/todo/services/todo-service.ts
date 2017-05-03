@@ -19,6 +19,9 @@ import {Subject} from "rxjs/Subject";
 @Injectable()
 export class TodoService {
 
+
+  private baseUrlUsers = 'http://localhost:8080/users';
+
   private users:Subject<any[]> = new BehaviorSubject<any[]>([]);
   users$ = this.users.asObservable();
 
@@ -27,6 +30,8 @@ export class TodoService {
 
   private selectedImage:Subject<number> = new BehaviorSubject<number>(0);
   selectedImage$ = this.selectedImage.asObservable();
+
+  constructor(@Inject(Http) private _http: Http){}
 
   addUsers(users:any[]) {
     this.users.next(users);
@@ -38,6 +43,11 @@ export class TodoService {
 
   setSelectedImage(selImage: any){
     this.selectedImage.next(selImage);
+  }
+
+  getUsers() : Observable<any> {
+    return this._http.get(this.baseUrlUsers)
+      .map((r) => r.json());
   }
 
 }

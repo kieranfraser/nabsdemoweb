@@ -30,13 +30,17 @@ var HomeCmp = (function () {
             _this.users = users;
             if (_this.users.length == 0) {
                 _this.isRequesting = true;
-                _this.af.database.list("web/users/").subscribe(function (data) {
-                    for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
-                        var val = data_1[_i];
-                        _this.users.push(val);
-                    }
-                    _this.todoService.addUsers(_this.users);
-                    _this.isRequesting = false;
+                /*this.af.database.list("web/users/").subscribe(data=>{
+                  for(var val of data){
+                    this.users.push(val);
+                  }
+                  this.todoService.addUsers(this.users);
+                  this.isRequesting = false;
+                });*/
+                _this.todoService
+                    .getUsers()
+                    .subscribe(function (users) {
+                    _this.users = users;
                 });
             }
         });
