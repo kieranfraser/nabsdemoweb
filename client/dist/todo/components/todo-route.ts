@@ -9,7 +9,7 @@ import {
 
 const todoRoutes:Routes = [
 	{
-		path: "",
+		path: "error",
 		component: TodoCmp,
 		pathMatch: "full"
 	}

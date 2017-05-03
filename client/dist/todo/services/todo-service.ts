@@ -20,7 +20,8 @@ import {Subject} from "rxjs/Subject";
 export class TodoService {
 
 
-  private baseUrlUsers = 'http://localhost:8080/users';
+  //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
+  private baseUrlUsers = 'https://nabsdemo.herokuapp.com/users';
 
   private users:Subject<any[]> = new BehaviorSubject<any[]>([]);
   users$ = this.users.asObservable();

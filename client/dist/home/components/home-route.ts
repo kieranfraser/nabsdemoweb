@@ -9,7 +9,7 @@ import {
 
 const homeRoutes:Routes = [
 	{
-		path: "home",
+		path: "",
 		component: HomeCmp,
 		pathMatch: "full"
 	}

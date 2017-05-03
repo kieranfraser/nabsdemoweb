@@ -45,6 +45,7 @@ export class SimCmp implements OnInit {
 
 
   private selectedNotification: any = null;
+  private selectedNotificationEvents: any = null;
   private selectedResult: string = null;
 
   private alertSenderInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
@@ -60,6 +61,8 @@ export class SimCmp implements OnInit {
     "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP"];
 
   private alertOptions: string[] = ["NOW", "VERYSOON", "SOON", "LATER", "MUCHLATER"];
+
+  private defaultParams: string[] = null;
 
 
   constructor(private af: AngularFire, private todoService: TodoService, private router: Router,
@@ -81,26 +84,29 @@ export class SimCmp implements OnInit {
   ngOnInit() {
     console.log("init");
     if(this.selectedUser==null){
-      this.router.navigate(['../home']);
+      this.router.navigate(['../']);
     }
+    else{
+      this.simService
+        .getDefaultAlertParams()
+        .subscribe((resultParams) => {
+          this.alertParams = resultParams;
+          this.simService
+            .getDefaultAlertParams()
+            .subscribe((resultParams) => {
+              this.defaultParams = resultParams;
+              this.fireAllParams();
+            });
+        });
+    }
+  }
 
-    this.simService
-      .getDefaultAlertParams()
-      .subscribe((alertParams) => {
-        this.alertParams = alertParams;
-      });
+  switchUser(){
+    this.router.navigate(['../']);
   }
 
   notificationSelected(notification: any){
     this.selectedNotification = notification;
-  }
-
-  fireAll(){
-    this.simService
-      .getResults(this.selectedUser.id)
-      .subscribe((allResults) => {
-        this.allResults = allResults;
-      });
   }
 
   fireAllParams(){
@@ -114,6 +120,7 @@ export class SimCmp implements OnInit {
   setNotification(notification: any, result: string){
     this.selectedNotification = notification;
     this.selectedResult = result;
+    this.getNotificationEvents();
   }
 
   trackByIndex(index: number, value: number) {
@@ -121,6 +128,40 @@ export class SimCmp implements OnInit {
   }
 
   checkAlertParams(){
+    console.log("Custom: ");
     console.log(this.alertParams);
+    console.log("Default: ");
+    console.log(this.defaultParams);
+  }
+
+  getNotificationEvents(){
+    this.simService
+      .getNotificationEvents(this.selectedUser.id, this.selectedNotification.date)
+      .subscribe((eventResults)=> {
+        this.selectedNotificationEvents = eventResults;
+        for(var event of this.selectedNotificationEvents){
+          var d = new Date(event.endDate);
+          event.endDate = d;
+          d = new Date(event.startDate);
+          event.startDate = d;
+        }
+      });
+  }
+
+  resetParams(){
+    this.simService
+      .getDefaultAlertParams()
+      .subscribe((resultParams) => {
+        this.alertParams = resultParams;
+      });
+  }
+
+  checkCustomRules(){
+    for(var i=0; i<this.alertParams.length; i++){
+      if(this.alertParams[i] != this.defaultParams[i]){
+        return true;
+      }
+    }
+    return false;
   }
 }

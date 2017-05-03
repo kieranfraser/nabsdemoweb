@@ -19,7 +19,8 @@ var BehaviorSubject_1 = require("rxjs/BehaviorSubject");
 var TodoService = (function () {
     function TodoService(_http) {
         this._http = _http;
-        this.baseUrlUsers = 'http://localhost:8080/users';
+        //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
+        this.baseUrlUsers = 'https://nabsdemo.herokuapp.com/users';
         this.users = new BehaviorSubject_1.BehaviorSubject([]);
         this.users$ = this.users.asObservable();
         this.selectedUser = new BehaviorSubject_1.BehaviorSubject(null);

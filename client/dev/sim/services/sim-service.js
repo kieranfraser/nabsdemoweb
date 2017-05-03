@@ -20,10 +20,12 @@ var SimService = (function () {
     function SimService(_http) {
         this._http = _http;
         //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
-        this.baseUrlResult = 'http://localhost:8080/result';
-        this.baseUrlParams = 'http://localhost:8080/params';
-        this.baseUrlResultParams = 'http://localhost:8080/resultparams';
-        this.baseUrlNotifEvents = 'http://localhost:8080/notificationevents';
+        this.base = 'https://nabsdemo.herokuapp.com';
+        this.baseLocal = 'http://localhost:8080';
+        this.baseUrlResult = this.base + '/result';
+        this.baseUrlParams = this.base + '/params';
+        this.baseUrlResultParams = this.base + '/resultparams';
+        this.baseUrlNotifEvents = this.base + '/notificationevents';
     }
     SimService.prototype.getResults = function (userId) {
         return this._http.get(this.baseUrlResult + "?user=" + userId + "&notifId=something")
