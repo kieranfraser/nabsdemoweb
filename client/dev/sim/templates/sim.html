@@ -1,7 +1,7 @@
 <body class="size-1140 align-content-left">
   <div class="container" style="padding-left: 0px; margin-left: 0px; width: 100%; padding-right: 0px;">
     <div class="line">
-      <div id="content-wrapper" style="margin-left: 25%; margin-right: 25%; min-height: 98vh;">
+      <div id="content-wrapper" style="margin-left: 15%; margin-right: 15%; min-height: 98vh;">
         <!-- LEFT COLUMN -->
         <div class="s-12 m-4 l-3" style="max-height: 98vh; overflow: hidden">
           <div class="logo-box">
@@ -46,34 +46,34 @@
           </div>
         </div>
 
-        <div class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center">
-          <div class="box">
+        <div class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center;">
+          <div class="box" style="background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; padding: 0px">
             <!-- HEADER -->
             <!-- CAROUSEL -->
-            <section *ngIf="selectedUser != null && alertParams != null && defaultParams!=null" style="border-bottom: grey; border-bottom-style: solid;">
+            <section *ngIf="selectedUser != null && alertParams != null && defaultParams!=null" style="background-color: rgba(0, 0, 0, 0.73); position: sticky; z-index: 1; top: 0; color: white;">
               <article class="line">
                 <div class="margin" style="margin-bottom: 20px; margin-top: 20px;">
                   <div class="s-12 m-12 l-10" style="width: 100%; margin: 0 auto;">
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
                               (click)="lgModalInfo.show();" style="background-color: white"><img src="./common/dist/img/info.png"/></button>
-                      <div style="display: block; text-align: center;;">{{selectedUser.id}}</div>
+                      <div style="display: block; text-align: center; margin-top: 10px;">{{selectedUser.id}}</div>
                     </div>
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
                               (click)="lgModalNotif.show();" style="background-color: white"><img src="./common/dist/img/notification.png"/></button>
-                      <div style="display: block; text-align: center;;">{{selectedUser.notifications?.length}}</div>
+                      <div style="display: block; text-align: center; margin-top: 10px;">{{selectedUser.notifications?.length}}</div>
                     </div>
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
                               (click)="lgModalEvent.show();" style="background-color: white"><img src="./common/dist/img/calendar.png"/></button>
-                      <div style="display: block; text-align: center;;">{{selectedUser.events?.length}}</div>
+                      <div style="display: block; text-align: center; margin-top: 10px;">{{selectedUser.events?.length}}</div>
                     </div>
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
                               (click)="lgModalControl.show();" style="background-color: white"><img src="./common/dist/img/controls.png"/></button>
-                      <div *ngIf="checkCustomRules()" style="display: block; text-align: center;">Custom</div>
-                      <div *ngIf="!checkCustomRules()" style="display: block; text-align: center;">Default</div>
+                      <div *ngIf="checkCustomRules()" style="display: block; text-align: center; margin-top: 10px;">Custom</div>
+                      <div *ngIf="!checkCustomRules()" style="display: block; text-align: center; margin-top: 10px;">Default</div>
                     </div>
                   </div>
 
@@ -81,7 +81,8 @@
               </article>
             </section>
 
-            <section *ngIf="selectedUser != null && allResults?.length > 0">
+            <!-- Notification Results section -->
+            <!--<section *ngIf="selectedUser != null && allResults?.length > 0">
               <article *ngFor="let result of allResults; let i = index" class="line">
                 <div class="margin" style="margin-bottom: 20px; margin-top: 20px;">
 
@@ -109,7 +110,42 @@
                 </div>
               </article>
 
+            </section>-->
+            <section id="timeline" *ngIf="selectedUser != null && allResults?.length > 0">
+              <article *ngFor="let result of allResults; let i = index">
+                <div [ngSwitch]="result?.result">
+                  <button type="button" *ngSwitchCase="'now'" class="btn btn-info btn-lg btn-circle btn-xl"
+                          style="background-color: green; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                  <button type="button" *ngSwitchCase="'break'" class="btn btn-info btn-lg btn-circle btn-xl"
+                          style="background-color: dodgerblue; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                  <button type="button" *ngSwitchCase="'period'" class="btn btn-info btn-lg btn-circle btn-xl"
+                          style="background-color: purple; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                  <button type="button" *ngSwitchCase="'little later'" class="btn btn-info btn-lg btn-circle btn-xl"
+                          style="background-color: yellow; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                  <button type="button" *ngSwitchCase="'much later'" class="btn btn-info btn-lg btn-circle btn-xl"
+                          style="background-color: red; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                  <button type="button" *ngSwitchDefault class="btn btn-info btn-lg btn-circle btn-xl"
+                          style="background-color: white; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img src="./common/dist/img/notificationBlack.png"/></button>
+                </div>
+                <!--<button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
+                        style="background-color: white; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img src="./common/dist/img/notification.png"/></button>-->
+                <div class="inner" style="box-shadow: 10px 10px 5px darkgrey;">
+                  <div [ngSwitch]="result?.result">
+                    <h2 *ngSwitchCase="'now'" style="background-color: green;">{{selectedUser.notifications[i].date}}</h2>
+                    <h2 *ngSwitchCase="'break'" style="background-color: dodgerblue;">{{selectedUser.notifications[i].date}}</h2>
+                    <h2 *ngSwitchCase="'period'" style="background-color: purple;">{{selectedUser.notifications[i].date}}</h2>
+                    <h2 *ngSwitchCase="'little later'" style="background-color: yellow;">{{selectedUser.notifications[i].date}}</h2>
+                    <h2 *ngSwitchCase="'much later'" style="background-color: red;">{{selectedUser.notifications[i].date}}</h2>
+                    <h2 *ngSwitchDefault style="background-color: white;">{{selectedUser.notifications[i].date}}</h2>
+                  </div>
+                  <!--<h2 style="background-color: #f18900;">{{selectedUser.notifications[i].date | date:'short'}}</h2>-->
+                  <p>{{result.result}}</p>
+                </div>
+              </article>
             </section>
+            <!--Notification Results section end -->
+
+
           </div>
           <!-- FOOTER -->
           <div class="box footer">
@@ -295,11 +331,10 @@
               <tbody>
               <tr>
                 <td>{{selectedNotification?.id}}</td>
-                <td>{{selectedNotification?.date}}</td>
+                <td>{{selectedNotification?.date | date:'MM/dd/yy h:mm a'}}</td>
                 <td>{{selectedNotification?.sender}}</td>
                 <td>{{selectedNotification?.senderRank}}</td>
                 <td>{{selectedNotification?.subject.subject}}</td>
-                <td>{{selectedNotification?.subjectRank}}</td>
                 <td>{{selectedNotification?.app.name}}</td>
                 <td>{{selectedNotification?.appRank}}</td>
               </tr>
@@ -323,8 +358,8 @@
                 <tr class="pointer" *ngFor="let event of selectedNotificationEvents;">
                   <td>{{event?.summary}}</td>
                   <td>{{event?.description}}</td>
-                  <td>{{event?.startDate | date:'short'}}</td>
-                  <td>{{eevent?.endDate | date:'short'}}</td>
+                  <td>{{event?.startDate | date:'dd/MM/yy h:mm a'}}</td>
+                  <td>{{event?.endDate | date:'dd/MM/yy h:mm a'}}</td>
                 </tr>
                 </tbody>
               </table>

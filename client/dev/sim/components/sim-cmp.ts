@@ -25,7 +25,7 @@ import {Result} from "../model/result";
 @Component({
   selector: "sim-cmp",
   templateUrl: "sim/templates/sim.html",
-  styleUrls: ["sim/styles/sim.css"]
+  styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css"]
 })
 export class SimCmp implements OnInit {
   title: string = "NAbs";
@@ -139,12 +139,12 @@ export class SimCmp implements OnInit {
       .getNotificationEvents(this.selectedUser.id, this.selectedNotification.date)
       .subscribe((eventResults)=> {
         this.selectedNotificationEvents = eventResults;
-        for(var event of this.selectedNotificationEvents){
+        /*for(var event of this.selectedNotificationEvents){
           var d = new Date(event.endDate);
           event.endDate = d;
           d = new Date(event.startDate);
           event.startDate = d;
-        }
+        }*/
       });
   }
 

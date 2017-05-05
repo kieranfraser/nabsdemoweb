@@ -106,13 +106,12 @@ var SimCmp = (function () {
             .getNotificationEvents(this.selectedUser.id, this.selectedNotification.date)
             .subscribe(function (eventResults) {
             _this.selectedNotificationEvents = eventResults;
-            for (var _i = 0, _a = _this.selectedNotificationEvents; _i < _a.length; _i++) {
-                var event = _a[_i];
-                var d = new Date(event.endDate);
-                event.endDate = d;
-                d = new Date(event.startDate);
-                event.startDate = d;
-            }
+            /*for(var event of this.selectedNotificationEvents){
+              var d = new Date(event.endDate);
+              event.endDate = d;
+              d = new Date(event.startDate);
+              event.startDate = d;
+            }*/
         });
     };
     SimCmp.prototype.resetParams = function () {
@@ -137,7 +136,7 @@ SimCmp = __decorate([
     core_1.Component({
         selector: "sim-cmp",
         templateUrl: "sim/templates/sim.html",
-        styleUrls: ["sim/styles/sim.css"]
+        styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css"]
     }),
     __metadata("design:paramtypes", [angularfire2_1.AngularFire, todo_service_1.TodoService, router_1.Router,
         sim_service_1.SimService])
