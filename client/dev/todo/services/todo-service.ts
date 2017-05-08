@@ -22,7 +22,7 @@ export class TodoService {
   private base = 'https://nabsdemo.herokuapp.com';
   private baseLocal = 'http://localhost:8080';
   //private baseUrl = 'https://nabsdemo.herokuapp.com/result';
-  private baseUrlUsers = this.baseLocal+'/users';
+  private baseUrlUsers = this.base+'/users';
 
   private users:Subject<any[]> = new BehaviorSubject<any[]>([]);
   users$ = this.users.asObservable();
