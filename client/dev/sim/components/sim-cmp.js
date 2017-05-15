@@ -45,6 +45,8 @@ var SimCmp = (function () {
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP"];
         this.alertOptions = ["NOW", "VERYSOON", "SOON", "LATER", "MUCHLATER"];
         this.defaultParams = null;
+        this.subjectLabels = ["family", "work", "social", "interest"];
+        this.subjectRankings = [5, 5, 5, 5];
         this.subscriptionOne = this.todoService.selectedUser$.subscribe(function (selectedUser) {
             _this.selectedUser = selectedUser;
             console.log("sel user");
@@ -78,6 +80,30 @@ var SimCmp = (function () {
                 });
             });
         }
+        this.svgGraph();
+    };
+    SimCmp.prototype.svgGraph = function () {
+        var data = this.subjectRankings;
+        var bar = new RGraph.Bar({
+            id: 'cvs',
+            data: data,
+            options: {
+                labels: this.subjectLabels,
+                textAccessible: true,
+                gutterTop: 35,
+                gutterLeft: 35,
+                gutterLeft: 35,
+                adjustable: true,
+                numyticks: 10,
+                ylabels: true,
+                ymax: 10,
+                ymin: 0.1,
+                scaleRound: false,
+            }
+        }).draw().on('onadjustend', function (obj) {
+            console.log(obj.data);
+            this.subjectRankings = obj.data;
+        });
     };
     SimCmp.prototype.askSomething = function (text) {
         var msg = new SpeechSynthesisUtterance(text);
@@ -209,6 +235,9 @@ var SimCmp = (function () {
         else {
             this.currentStep = 0;
         }
+    };
+    SimCmp.prototype.initControl = function () {
+        console.log("init the controls");
     };
     return SimCmp;
 }());

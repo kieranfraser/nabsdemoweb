@@ -13,6 +13,8 @@ import {
   SimService
 } from "../services/sim-service";
 
+declare var RGraph: any;
+
 import {AngularFire, AuthProviders, AuthMethods, FirebaseListObservable} from 'angularfire2';
 import {FirebaseObjectObservable} from "angularfire2/index";
 import 'rxjs/add/operator/take';
@@ -72,6 +74,9 @@ export class SimCmp implements OnInit {
   private synth: any;
   private voice: any;
 
+  private subjectLabels = ["family", "work", "social", "interest"];
+  private subjectRankings = [5, 5, 5, 5];
+
   // Phase of questioning
   /* Step 1: ask if the notification is correct
   *  Step 2: ask if it should have been delivered sooner or later
@@ -118,6 +123,34 @@ export class SimCmp implements OnInit {
             });
         });
     }
+
+    this.svgGraph();
+  }
+
+  svgGraph(){
+    var data = this.subjectRankings;
+
+    var bar = new RGraph.Bar({
+      id: 'cvs',
+      data: data,
+      options: {
+        labels: this.subjectLabels,
+        textAccessible: true,
+        gutterTop: 35,
+        gutterLeft: 35,
+        gutterLeft: 35,
+        adjustable: true,
+        numyticks: 10,
+        ylabels: true,
+        ymax: 10,
+        ymin: 0.1,
+        scaleRound: false,
+      }
+    }).draw().on('onadjustend', function (obj)
+    {
+      console.log(obj.data);
+      this.subjectRankings = obj.data;
+    });
   }
 
   askSomething(text: string){
@@ -261,5 +294,9 @@ export class SimCmp implements OnInit {
     else{
       this.currentStep = 0;
     }
+  }
+
+  initControl(){
+    console.log("init the controls");
   }
 }
