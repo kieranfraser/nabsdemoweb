@@ -23,6 +23,7 @@ var ngx_bootstrap_1 = require("ngx-bootstrap");
 var sim_service_1 = require("./sim/services/sim-service");
 var sim_cmp_1 = require("./sim/components/sim-cmp");
 var sim_route_1 = require("./sim/components/sim-route");
+var speech_recognition_service_1 = require("./sim/services/speech-recognition-service");
 exports.config = {
     apiKey: "AIzaSyBuH2Fjok4gt7ouDB2tz39DU51DFEaYcY0",
     authDomain: "nabsdemo.firebaseapp.com",
@@ -60,6 +61,7 @@ AppModule = __decorate([
             todo_service_1.TodoService,
             home_service_1.HomeService,
             sim_service_1.SimService,
+            speech_recognition_service_1.SpeechRecognitionService,
         ],
         bootstrap: [
             app_1.App,

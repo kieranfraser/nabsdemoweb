@@ -23,10 +23,10 @@ export class SimService {
   private base = 'https://nabsdemo.herokuapp.com';
   private baseLocal = 'http://localhost:8080';
 
-  private baseUrlResult = this.base+'/result';
-  private baseUrlParams = this.base+'/params';
-  private baseUrlResultParams = this.base+'/resultparams';
-  private baseUrlNotifEvents = this.base+'/notificationevents';
+  private baseUrlResult = this.baseLocal+'/result';
+  private baseUrlParams = this.baseLocal+'/params';
+  private baseUrlResultParams = this.baseLocal+'/resultparams';
+  private baseUrlNotifEvents = this.baseLocal+'/notificationevents';
 
   constructor (@Inject(Http) private _http: Http) {}
 
@@ -49,5 +49,7 @@ export class SimService {
     return this._http.get(this.baseUrlNotifEvents+"?user="+userId+"&date="+date)
       .map((r) => r.json());
   }
+
+
 
 }

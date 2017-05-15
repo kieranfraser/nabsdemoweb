@@ -314,6 +314,8 @@
             <button type="button" class="close pull-right" (click)="lgModalNotifDetail.hide()" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
+            <button type="button" class="btn btn-info btn-lg btn-circle btn-xl pull-right"
+                    style="background-color: white;" (click)="askQuestion();"><img src="./common/dist/img/microphone.png"/></button>
             <h2 *ngIf="selectedResult != null">Result: {{selectedResult}}</h2>
             <table class="table">
               <thead>

@@ -20,6 +20,7 @@ import { ModalModule } from 'ngx-bootstrap';
 import {SimService} from "./sim/services/sim-service";
 import {SimCmp} from "./sim/components/sim-cmp";
 import {simRouting} from "./sim/components/sim-route";
+import {SpeechRecognitionService} from "./sim/services/speech-recognition-service";
 
 export const config = {
   apiKey: "AIzaSyBuH2Fjok4gt7ouDB2tz39DU51DFEaYcY0",
@@ -53,6 +54,7 @@ export const config = {
       TodoService,
       HomeService,
       SimService,
+      SpeechRecognitionService,
     ],
     bootstrap: [
       App,

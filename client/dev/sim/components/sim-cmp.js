@@ -15,13 +15,15 @@ var angularfire2_1 = require("angularfire2");
 require("rxjs/add/operator/take");
 var todo_service_1 = require("../../todo/services/todo-service");
 var router_1 = require("@angular/router");
+var speech_recognition_service_1 = require("../services/speech-recognition-service");
 var SimCmp = (function () {
-    function SimCmp(af, todoService, router, simService) {
+    function SimCmp(af, todoService, router, simService, speechService) {
         var _this = this;
         this.af = af;
         this.todoService = todoService;
         this.router = router;
         this.simService = simService;
+        this.speechService = speechService;
         this.title = "NAbs";
         this.selectedUser = null;
         this.selectedImage = null;
@@ -31,6 +33,7 @@ var SimCmp = (function () {
         this.selectedNotification = null;
         this.selectedNotificationEvents = null;
         this.selectedResult = null;
+        this.firstQuestion = "Was this notification delivered correctly?";
         this.alertSenderInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
             "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
             "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
@@ -51,6 +54,10 @@ var SimCmp = (function () {
             console.log("sel image");
             console.log(_this.selectedImage);
         });
+        this.synth = window.speechSynthesis;
+        var voices = this.synth.getVoices();
+        this.voice = voices[3];
+        this.currentStep = 0;
     }
     SimCmp.prototype.ngOnInit = function () {
         var _this = this;
@@ -71,6 +78,67 @@ var SimCmp = (function () {
                 });
             });
         }
+    };
+    SimCmp.prototype.askSomething = function (text) {
+        var msg = new SpeechSynthesisUtterance(text);
+        msg.voice = this.voice;
+        this.synth.speak(msg);
+        msg.onend = function (e) {
+            this.activateSpeechSearch();
+        }.bind(this);
+    };
+    SimCmp.prototype.askQuestion = function () {
+        this.askSomething('Do you think this notification is right?');
+        /*var synth = window.speechSynthesis;
+    
+        var voices = synth.getVoices();
+    
+        for(var i = 0; i < voices.length ; i++) {
+          console.log(voices[i])
+        }
+    
+        var msg = new SpeechSynthesisUtterance('Do you think this notification was delivered correctly?');
+        msg.voice = voices[3];
+        synth.speak(msg);
+        msg.onend = function(e) {
+          this.startListening();
+        }.bind(this);*/
+    };
+    SimCmp.prototype.activateSpeechSearch = function () {
+        var _this = this;
+        this.speechService.record()
+            .subscribe(
+        //listener
+        function (value) {
+            _this.speechData = value;
+            console.log(value);
+            _this.speechService
+                .getContinueResult(_this.speechData)
+                .subscribe(function (result) {
+                if (result) {
+                    var msg = new SpeechSynthesisUtterance("Okay, let's investigate!");
+                    window.speechSynthesis.speak(msg);
+                    console.log("Continue with the understanding phase!");
+                }
+                else {
+                    var msg = new SpeechSynthesisUtterance('Great!');
+                    window.speechSynthesis.speak(msg);
+                    console.log("All's good - finish");
+                }
+                _this.speechService.DestroySpeechObject();
+            });
+        }, 
+        //errror
+        function (err) {
+            console.log(err);
+            if (err.error == "no-speech") {
+                console.log("--restatring service--");
+                _this.activateSpeechSearch();
+            }
+        }, 
+        //completion
+        function () {
+        });
     };
     SimCmp.prototype.switchUser = function () {
         this.router.navigate(['../']);
@@ -130,6 +198,18 @@ var SimCmp = (function () {
         }
         return false;
     };
+    SimCmp.prototype.startListening = function () {
+        console.log("start listening clicked");
+        this.activateSpeechSearch();
+    };
+    SimCmp.prototype.nextStep = function () {
+        if (this.currentStep < 2) {
+            this.currentStep += 1;
+        }
+        else {
+            this.currentStep = 0;
+        }
+    };
     return SimCmp;
 }());
 SimCmp = __decorate([
@@ -139,6 +219,6 @@ SimCmp = __decorate([
         styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css"]
     }),
     __metadata("design:paramtypes", [angularfire2_1.AngularFire, todo_service_1.TodoService, router_1.Router,
-        sim_service_1.SimService])
+        sim_service_1.SimService, speech_recognition_service_1.SpeechRecognitionService])
 ], SimCmp);
 exports.SimCmp = SimCmp;

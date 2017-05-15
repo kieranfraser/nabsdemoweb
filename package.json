@@ -22,6 +22,8 @@
     "@angular/platform-browser": "^2.4.4",
     "@angular/platform-browser-dynamic": "^2.4.4",
     "@angular/router": "^3.4.4",
+    "@types/lodash": "^4.14.64",
+    "angular2-fusioncharts": "^1.0.2-rc.4",
     "angularfire2": "^2.0.0-beta.8",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-es2016": "^6.0.11",

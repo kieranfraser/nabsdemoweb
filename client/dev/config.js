@@ -23,7 +23,8 @@ System.config({
     'rxjs':                       'npm:rxjs',
     'angularfire2':               'npm:angularfire2/bundles/angularfire2.umd.js',
     'firebase':                   'npm:firebase/firebase.js',
-    'moment':                     'npm:moment/moemnt.js',
-    'ngx-bootstrap':              'npm:ngx-bootstrap/bundles/ngx-bootstrap.umd.js'
+    'moment':                     'npm:moment/moment.js',
+    'ngx-bootstrap':              'npm:ngx-bootstrap/bundles/ngx-bootstrap.umd.js',
+    'lodash':                     'npm:lodash/lodash.js',
   }
 });

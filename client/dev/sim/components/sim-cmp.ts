@@ -21,6 +21,7 @@ import {TodoService} from "../../todo/services/todo-service";
 import {SpinnerComponent} from "../../todo/components/spinner-cmp";
 import {Router} from "@angular/router";
 import {Result} from "../model/result";
+import {SpeechRecognitionService} from "../services/speech-recognition-service";
 
 @Component({
   selector: "sim-cmp",
@@ -48,6 +49,8 @@ export class SimCmp implements OnInit {
   private selectedNotificationEvents: any = null;
   private selectedResult: string = null;
 
+  private firstQuestion = "Was this notification delivered correctly?";
+
   private alertSenderInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
   "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
   "VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP"];
@@ -64,9 +67,20 @@ export class SimCmp implements OnInit {
 
   private defaultParams: string[] = null;
 
+  speechData: string;
+
+  private synth: any;
+  private voice: any;
+
+  // Phase of questioning
+  /* Step 1: ask if the notification is correct
+  *  Step 2: ask if it should have been delivered sooner or later
+  *  Step 3: ask which part of the notification provides evidence for this
+  *  */
+  private currentStep;
 
   constructor(private af: AngularFire, private todoService: TodoService, private router: Router,
-              private simService: SimService) {
+              private simService: SimService, private speechService: SpeechRecognitionService) {
     this.subscriptionOne = this.todoService.selectedUser$.subscribe(
       selectedUser => {
         this.selectedUser = selectedUser;
@@ -79,6 +93,11 @@ export class SimCmp implements OnInit {
         console.log(this.selectedImage);
       }
     );
+    this.synth = window.speechSynthesis;
+    var voices = this.synth.getVoices();
+    this.voice = voices[3];
+
+    this.currentStep = 0;
   }
 
   ngOnInit() {
@@ -99,6 +118,71 @@ export class SimCmp implements OnInit {
             });
         });
     }
+  }
+
+  askSomething(text: string){
+    var msg = new SpeechSynthesisUtterance(text);
+    msg.voice = this.voice;
+    this.synth.speak(msg);
+    msg.onend = function(e) {
+      this.activateSpeechSearch();
+    }.bind(this);
+  }
+
+  askQuestion(){
+    this.askSomething('Do you think this notification is right?');
+    /*var synth = window.speechSynthesis;
+
+    var voices = synth.getVoices();
+
+    for(var i = 0; i < voices.length ; i++) {
+      console.log(voices[i])
+    }
+
+    var msg = new SpeechSynthesisUtterance('Do you think this notification was delivered correctly?');
+    msg.voice = voices[3];
+    synth.speak(msg);
+    msg.onend = function(e) {
+      this.startListening();
+    }.bind(this);*/
+  }
+
+  activateSpeechSearch(): void {
+
+    this.speechService.record()
+      .subscribe(
+        //listener
+        (value) => {
+          this.speechData = value;
+          console.log(value);
+          this.speechService
+            .getContinueResult(this.speechData)
+            .subscribe((result)=> {
+              if(result){
+                var msg = new SpeechSynthesisUtterance("Okay, let's investigate!");
+                window.speechSynthesis.speak(msg);
+                console.log("Continue with the understanding phase!");
+              }
+              else{
+                var msg = new SpeechSynthesisUtterance('Great!');
+                window.speechSynthesis.speak(msg);
+                console.log("All's good - finish")
+              }
+              this.speechService.DestroySpeechObject();
+            });
+        },
+        //errror
+        (err) => {
+          console.log(err);
+          if (err.error == "no-speech") {
+            console.log("--restatring service--");
+            this.activateSpeechSearch();
+          }
+        },
+        //completion
+        () => {
+
+        });
   }
 
   switchUser(){
@@ -163,5 +247,19 @@ export class SimCmp implements OnInit {
       }
     }
     return false;
+  }
+
+  startListening(){
+    console.log("start listening clicked");
+    this.activateSpeechSearch();
+  }
+
+  nextStep(){
+    if(this.currentStep < 2){
+      this.currentStep += 1;
+    }
+    else{
+      this.currentStep = 0;
+    }
   }
 }
