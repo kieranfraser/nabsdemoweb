@@ -86,18 +86,71 @@ var SimCmp = (function () {
      */
     SimCmp.prototype.svgGraph = function () {
         var data = this.subjectRankings;
-        var bar = new RGraph.Bar({
-            id: 'cvs',
+        var barSubject = new RGraph.Bar({
+            id: 'cvsSubject',
             data: data,
             options: {
                 labels: this.subjectLabels,
                 textAccessible: true,
-                gutterTop: 35,
-                gutterLeft: 35,
                 adjustable: true,
                 numyticks: 10,
                 ylabels: true,
                 ymax: 10,
+                shadowOffsetx: 1,
+                shadowOffsety: 1,
+                shadowBlur: 5,
+                gutterLeft: 5,
+                gutterRight: 5,
+                gutterTop: 50,
+                gutterBottom: 5,
+                ymin: 0.1,
+                scaleRound: false,
+            }
+        }).draw().on('onadjustend', function (obj) {
+            console.log(obj.data);
+            this.subjectRankings = obj.data;
+        });
+        var barSender = new RGraph.Bar({
+            id: 'cvsSender',
+            data: data,
+            options: {
+                labels: this.subjectLabels,
+                textAccessible: true,
+                adjustable: true,
+                numyticks: 10,
+                ylabels: true,
+                ymax: 10,
+                shadowOffsetx: 1,
+                shadowOffsety: 1,
+                shadowBlur: 5,
+                gutterLeft: 5,
+                gutterRight: 5,
+                gutterTop: 50,
+                gutterBottom: 5,
+                ymin: 0.1,
+                scaleRound: false,
+            }
+        }).draw().on('onadjustend', function (obj) {
+            console.log(obj.data);
+            this.subjectRankings = obj.data;
+        });
+        var barApp = new RGraph.Bar({
+            id: 'cvsApp',
+            data: data,
+            options: {
+                labels: this.subjectLabels,
+                textAccessible: true,
+                adjustable: true,
+                numyticks: 10,
+                ylabels: true,
+                ymax: 10,
+                shadowOffsetx: 1,
+                shadowOffsety: 1,
+                shadowBlur: 5,
+                gutterLeft: 5,
+                gutterRight: 5,
+                gutterTop: 50,
+                gutterBottom: 5,
                 ymin: 0.1,
                 scaleRound: false,
             }
@@ -289,6 +342,23 @@ var SimCmp = (function () {
             _this.askSomething(response.text);
             _this.activateSpeechSearch();
         });
+    };
+    /* Change delivery functionality */
+    SimCmp.prototype.changeDeliveryAction = function (context, feature, delivery) {
+        var finished = false;
+        while (!finished) {
+            // the array value for the notif feature passed
+        }
+    };
+    SimCmp.prototype.valueForFeature = function (feature) {
+        switch (feature) {
+            case "sender":
+                return this.selectedNotification.sender;
+            case "subject":
+                return this.selectedNotification.subject;
+            case "app":
+                return this.selectedNotification.app;
+        }
     };
     return SimCmp;
 }());
