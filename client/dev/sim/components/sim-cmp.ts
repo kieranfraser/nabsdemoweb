@@ -82,7 +82,7 @@ export class SimCmp implements OnInit {
   *  Step 2: ask if it should have been delivered sooner or later
   *  Step 3: ask which part of the notification provides evidence for this
   *  */
-  private currentStep;
+  private convoContext;
 
   constructor(private af: AngularFire, private todoService: TodoService, private router: Router,
               private simService: SimService, private speechService: SpeechRecognitionService) {
@@ -102,7 +102,6 @@ export class SimCmp implements OnInit {
     var voices = this.synth.getVoices();
     this.voice = voices[3];
 
-    this.currentStep = 0;
   }
 
   ngOnInit() {
@@ -127,6 +126,9 @@ export class SimCmp implements OnInit {
     this.svgGraph();
   }
 
+  /**
+   * Initialization of the interactive graph
+   */
   svgGraph(){
     var data = this.subjectRankings;
 
@@ -137,7 +139,6 @@ export class SimCmp implements OnInit {
         labels: this.subjectLabels,
         textAccessible: true,
         gutterTop: 35,
-        gutterLeft: 35,
         gutterLeft: 35,
         adjustable: true,
         numyticks: 10,
@@ -153,15 +154,22 @@ export class SimCmp implements OnInit {
     });
   }
 
+  /**
+   * Speaks given text input and listens for a response
+   * @param text
+     */
   askSomething(text: string){
     var msg = new SpeechSynthesisUtterance(text);
     msg.voice = this.voice;
     this.synth.speak(msg);
-    msg.onend = function(e) {
+    /*msg.onend = function(e) {
       this.activateSpeechSearch();
-    }.bind(this);
+    }.bind(this);*/
   }
 
+  /**
+   * Fired when microphone button is pushed - goes to askSomething
+   */
   askQuestion(){
     this.askSomething('Do you think this notification is right?');
     /*var synth = window.speechSynthesis;
@@ -180,6 +188,9 @@ export class SimCmp implements OnInit {
     }.bind(this);*/
   }
 
+  /**
+   * Activates the speech recording service
+   */
   activateSpeechSearch(): void {
 
     this.speechService.record()
@@ -188,7 +199,8 @@ export class SimCmp implements OnInit {
         (value) => {
           this.speechData = value;
           console.log(value);
-          this.speechService
+          this.continueConvo(value);
+          /*this.speechService
             .getContinueResult(this.speechData)
             .subscribe((result)=> {
               if(result){
@@ -202,7 +214,7 @@ export class SimCmp implements OnInit {
                 console.log("All's good - finish")
               }
               this.speechService.DestroySpeechObject();
-            });
+            });*/
         },
         //errror
         (err) => {
@@ -218,19 +230,32 @@ export class SimCmp implements OnInit {
         });
   }
 
+  /**
+   * Navigates back to previous page correctly.
+   */
   switchUser(){
     this.router.navigate(['../']);
   }
 
+  /**
+   * Called when notification button is pressed - sets the selected
+   * notification
+   * @param notification
+     */
   notificationSelected(notification: any){
     this.selectedNotification = notification;
   }
 
+  /**
+   * Fires all notifications using alert params.
+   */
   fireAllParams(){
     this.simService
       .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
       .subscribe((allResults)=> {
         this.allResults = allResults;
+        console.log("all results");
+        console.log(this.allResults);
       });
   }
 
@@ -240,17 +265,19 @@ export class SimCmp implements OnInit {
     this.getNotificationEvents();
   }
 
+  /**
+   * Used for the list of notifications.
+   * @param index
+   * @param value
+   * @returns {number}
+     */
   trackByIndex(index: number, value: number) {
     return index;
   }
 
-  checkAlertParams(){
-    console.log("Custom: ");
-    console.log(this.alertParams);
-    console.log("Default: ");
-    console.log(this.defaultParams);
-  }
-
+  /**
+   * Gets the events surrounding a particular notification.
+   */
   getNotificationEvents(){
     this.simService
       .getNotificationEvents(this.selectedUser.id, this.selectedNotification.date)
@@ -265,6 +292,9 @@ export class SimCmp implements OnInit {
       });
   }
 
+  /**
+   * Resets the alert params to the default values.
+   */
   resetParams(){
     this.simService
       .getDefaultAlertParams()
@@ -273,6 +303,11 @@ export class SimCmp implements OnInit {
       });
   }
 
+  /**
+   * Checks the difference between current and default rules to set the
+   * default/custom tag on the button
+   * @returns {boolean}
+     */
   checkCustomRules(){
     for(var i=0; i<this.alertParams.length; i++){
       if(this.alertParams[i] != this.defaultParams[i]){
@@ -282,21 +317,35 @@ export class SimCmp implements OnInit {
     return false;
   }
 
-  startListening(){
-    console.log("start listening clicked");
-    this.activateSpeechSearch();
-  }
-
-  nextStep(){
-    if(this.currentStep < 2){
-      this.currentStep += 1;
-    }
-    else{
-      this.currentStep = 0;
-    }
-  }
-
+  /**
+   * Inits the secondary control modal (from within the single notification view.
+   */
   initControl(){
     console.log("init the controls");
+  }
+
+  beginConvo(){
+    this.simService
+      .beginConvoRequest()
+      .subscribe((response) => {
+        console.log(response);
+        this.convoContext = response.context;
+        this.askSomething("Greetings friend, how can I help?");
+        this.activateSpeechSearch();
+      });
+  }
+
+  continueConvo(userResponse: string){
+    this.simService
+      .continueConvoRequest(userResponse, this.convoContext)
+      .subscribe((response) => {
+        console.log(response);
+        this.convoContext = response.context;
+        // switch and case
+
+        // else
+        this.askSomething(response.text);
+        this.activateSpeechSearch();
+      });
   }
 }

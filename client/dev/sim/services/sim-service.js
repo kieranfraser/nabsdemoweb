@@ -26,6 +26,8 @@ var SimService = (function () {
         this.baseUrlParams = this.baseLocal + '/params';
         this.baseUrlResultParams = this.baseLocal + '/resultparams';
         this.baseUrlNotifEvents = this.baseLocal + '/notificationevents';
+        this.baseUrlBeginConvo = this.baseLocal + '/beginconvo';
+        this.baseUrlContinueConvo = this.baseLocal + '/continueconvo';
     }
     SimService.prototype.getResults = function (userId) {
         return this._http.get(this.baseUrlResult + "?user=" + userId + "&notifId=something")
@@ -41,6 +43,14 @@ var SimService = (function () {
     };
     SimService.prototype.getNotificationEvents = function (userId, date) {
         return this._http.get(this.baseUrlNotifEvents + "?user=" + userId + "&date=" + date)
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.beginConvoRequest = function () {
+        return this._http.get(this.baseUrlBeginConvo)
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.continueConvoRequest = function (input, context) {
+        return this._http.post(this.baseUrlContinueConvo + "?input=" + input, JSON.stringify(context))
             .map(function (r) { return r.json(); });
     };
     return SimService;

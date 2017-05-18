@@ -59,7 +59,6 @@ var SimCmp = (function () {
         this.synth = window.speechSynthesis;
         var voices = this.synth.getVoices();
         this.voice = voices[3];
-        this.currentStep = 0;
     }
     SimCmp.prototype.ngOnInit = function () {
         var _this = this;
@@ -82,6 +81,9 @@ var SimCmp = (function () {
         }
         this.svgGraph();
     };
+    /**
+     * Initialization of the interactive graph
+     */
     SimCmp.prototype.svgGraph = function () {
         var data = this.subjectRankings;
         var bar = new RGraph.Bar({
@@ -91,7 +93,6 @@ var SimCmp = (function () {
                 labels: this.subjectLabels,
                 textAccessible: true,
                 gutterTop: 35,
-                gutterLeft: 35,
                 gutterLeft: 35,
                 adjustable: true,
                 numyticks: 10,
@@ -105,14 +106,21 @@ var SimCmp = (function () {
             this.subjectRankings = obj.data;
         });
     };
+    /**
+     * Speaks given text input and listens for a response
+     * @param text
+       */
     SimCmp.prototype.askSomething = function (text) {
         var msg = new SpeechSynthesisUtterance(text);
         msg.voice = this.voice;
         this.synth.speak(msg);
-        msg.onend = function (e) {
-            this.activateSpeechSearch();
-        }.bind(this);
+        /*msg.onend = function(e) {
+          this.activateSpeechSearch();
+        }.bind(this);*/
     };
+    /**
+     * Fired when microphone button is pushed - goes to askSomething
+     */
     SimCmp.prototype.askQuestion = function () {
         this.askSomething('Do you think this notification is right?');
         /*var synth = window.speechSynthesis;
@@ -130,6 +138,9 @@ var SimCmp = (function () {
           this.startListening();
         }.bind(this);*/
     };
+    /**
+     * Activates the speech recording service
+     */
     SimCmp.prototype.activateSpeechSearch = function () {
         var _this = this;
         this.speechService.record()
@@ -138,21 +149,22 @@ var SimCmp = (function () {
         function (value) {
             _this.speechData = value;
             console.log(value);
-            _this.speechService
-                .getContinueResult(_this.speechData)
-                .subscribe(function (result) {
-                if (result) {
-                    var msg = new SpeechSynthesisUtterance("Okay, let's investigate!");
-                    window.speechSynthesis.speak(msg);
-                    console.log("Continue with the understanding phase!");
+            _this.continueConvo(value);
+            /*this.speechService
+              .getContinueResult(this.speechData)
+              .subscribe((result)=> {
+                if(result){
+                  var msg = new SpeechSynthesisUtterance("Okay, let's investigate!");
+                  window.speechSynthesis.speak(msg);
+                  console.log("Continue with the understanding phase!");
                 }
-                else {
-                    var msg = new SpeechSynthesisUtterance('Great!');
-                    window.speechSynthesis.speak(msg);
-                    console.log("All's good - finish");
+                else{
+                  var msg = new SpeechSynthesisUtterance('Great!');
+                  window.speechSynthesis.speak(msg);
+                  console.log("All's good - finish")
                 }
-                _this.speechService.DestroySpeechObject();
-            });
+                this.speechService.DestroySpeechObject();
+              });*/
         }, 
         //errror
         function (err) {
@@ -166,18 +178,31 @@ var SimCmp = (function () {
         function () {
         });
     };
+    /**
+     * Navigates back to previous page correctly.
+     */
     SimCmp.prototype.switchUser = function () {
         this.router.navigate(['../']);
     };
+    /**
+     * Called when notification button is pressed - sets the selected
+     * notification
+     * @param notification
+       */
     SimCmp.prototype.notificationSelected = function (notification) {
         this.selectedNotification = notification;
     };
+    /**
+     * Fires all notifications using alert params.
+     */
     SimCmp.prototype.fireAllParams = function () {
         var _this = this;
         this.simService
             .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
             .subscribe(function (allResults) {
             _this.allResults = allResults;
+            console.log("all results");
+            console.log(_this.allResults);
         });
     };
     SimCmp.prototype.setNotification = function (notification, result) {
@@ -185,15 +210,18 @@ var SimCmp = (function () {
         this.selectedResult = result;
         this.getNotificationEvents();
     };
+    /**
+     * Used for the list of notifications.
+     * @param index
+     * @param value
+     * @returns {number}
+       */
     SimCmp.prototype.trackByIndex = function (index, value) {
         return index;
     };
-    SimCmp.prototype.checkAlertParams = function () {
-        console.log("Custom: ");
-        console.log(this.alertParams);
-        console.log("Default: ");
-        console.log(this.defaultParams);
-    };
+    /**
+     * Gets the events surrounding a particular notification.
+     */
     SimCmp.prototype.getNotificationEvents = function () {
         var _this = this;
         this.simService
@@ -208,6 +236,9 @@ var SimCmp = (function () {
             }*/
         });
     };
+    /**
+     * Resets the alert params to the default values.
+     */
     SimCmp.prototype.resetParams = function () {
         var _this = this;
         this.simService
@@ -216,6 +247,11 @@ var SimCmp = (function () {
             _this.alertParams = resultParams;
         });
     };
+    /**
+     * Checks the difference between current and default rules to set the
+     * default/custom tag on the button
+     * @returns {boolean}
+       */
     SimCmp.prototype.checkCustomRules = function () {
         for (var i = 0; i < this.alertParams.length; i++) {
             if (this.alertParams[i] != this.defaultParams[i]) {
@@ -224,20 +260,35 @@ var SimCmp = (function () {
         }
         return false;
     };
-    SimCmp.prototype.startListening = function () {
-        console.log("start listening clicked");
-        this.activateSpeechSearch();
-    };
-    SimCmp.prototype.nextStep = function () {
-        if (this.currentStep < 2) {
-            this.currentStep += 1;
-        }
-        else {
-            this.currentStep = 0;
-        }
-    };
+    /**
+     * Inits the secondary control modal (from within the single notification view.
+     */
     SimCmp.prototype.initControl = function () {
         console.log("init the controls");
+    };
+    SimCmp.prototype.beginConvo = function () {
+        var _this = this;
+        this.simService
+            .beginConvoRequest()
+            .subscribe(function (response) {
+            console.log(response);
+            _this.convoContext = response.context;
+            _this.askSomething("Greetings friend, how can I help?");
+            _this.activateSpeechSearch();
+        });
+    };
+    SimCmp.prototype.continueConvo = function (userResponse) {
+        var _this = this;
+        this.simService
+            .continueConvoRequest(userResponse, this.convoContext)
+            .subscribe(function (response) {
+            console.log(response);
+            _this.convoContext = response.context;
+            // switch and case
+            // else
+            _this.askSomething(response.text);
+            _this.activateSpeechSearch();
+        });
     };
     return SimCmp;
 }());

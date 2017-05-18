@@ -27,6 +27,8 @@ export class SimService {
   private baseUrlParams = this.baseLocal+'/params';
   private baseUrlResultParams = this.baseLocal+'/resultparams';
   private baseUrlNotifEvents = this.baseLocal+'/notificationevents';
+  private baseUrlBeginConvo = this.baseLocal+'/beginconvo';
+  private baseUrlContinueConvo = this.baseLocal+'/continueconvo';
 
   constructor (@Inject(Http) private _http: Http) {}
 
@@ -50,6 +52,14 @@ export class SimService {
       .map((r) => r.json());
   }
 
+  beginConvoRequest() : Observable<any> {
+    return this._http.get(this.baseUrlBeginConvo)
+      .map((r) => r.json());
+  }
 
+  continueConvoRequest(input: String, context: any) : Observable<any> {
+      return this._http.post(this.baseUrlContinueConvo+"?input="+input, JSON.stringify(context))
+      .map((r) => r.json());
+  }
 
 }

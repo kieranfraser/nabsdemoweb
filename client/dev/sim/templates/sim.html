@@ -315,7 +315,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
             <button type="button" class="btn btn-info btn-lg btn-circle btn-xl pull-right"
-                    style="background-color: white; margin: 10px;" (click)="askQuestion();"><img src="./common/dist/img/microphone.png"/></button>
+                    style="background-color: white; margin: 10px;" (click)="beginConvo();"><img src="./common/dist/img/microphone.png"/></button>
             <button type="button" class="btn btn-info btn-lg btn-circle btn-xl pull-right"
                     style="background-color: white; margin: 10px" (click)="initControl(); lgModalSingleControl.show();"><img src="./common/dist/img/controls.png"/></button>
             <h2 *ngIf="selectedResult != null">Result: {{selectedResult}}</h2>
