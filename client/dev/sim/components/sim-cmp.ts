@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit
+  OnInit, ViewChild
 } from "@angular/core";
 
 import {
@@ -50,6 +50,8 @@ export class SimCmp implements OnInit {
   private selectedNotification: any = null;
   private selectedNotificationEvents: any = null;
   private selectedResult: string = null;
+
+  @ViewChild('lgModalControl') lgModalControl;
 
   private firstQuestion = "Was this notification delivered correctly?";
 
@@ -158,7 +160,7 @@ export class SimCmp implements OnInit {
       this.subjectRankings = obj.data;
     });
 
-    var barSender = new RGraph.Bar({
+    /*var barSender = new RGraph.Bar({
       id: 'cvsSender',
       data: data,
       options: {
@@ -208,7 +210,7 @@ export class SimCmp implements OnInit {
     {
       console.log(obj.data);
       this.subjectRankings = obj.data;
-    });
+    });*/
   }
 
   /**
@@ -221,27 +223,6 @@ export class SimCmp implements OnInit {
     this.synth.speak(msg);
     /*msg.onend = function(e) {
       this.activateSpeechSearch();
-    }.bind(this);*/
-  }
-
-  /**
-   * Fired when microphone button is pushed - goes to askSomething
-   */
-  askQuestion(){
-    this.askSomething('Do you think this notification is right?');
-    /*var synth = window.speechSynthesis;
-
-    var voices = synth.getVoices();
-
-    for(var i = 0; i < voices.length ; i++) {
-      console.log(voices[i])
-    }
-
-    var msg = new SpeechSynthesisUtterance('Do you think this notification was delivered correctly?');
-    msg.voice = voices[3];
-    synth.speak(msg);
-    msg.onend = function(e) {
-      this.startListening();
     }.bind(this);*/
   }
 
@@ -382,12 +363,14 @@ export class SimCmp implements OnInit {
   }
 
   beginConvo(){
+
+    this.lgModalControl.show();
     this.simService
       .beginConvoRequest()
       .subscribe((response) => {
         console.log(response);
         this.convoContext = response.context;
-        this.askSomething("Greetings friend, how can I help?");
+        this.askSomething("how can I help?");
         this.activateSpeechSearch();
       });
   }
@@ -398,7 +381,14 @@ export class SimCmp implements OnInit {
       .subscribe((response) => {
         console.log(response);
         this.convoContext = response.context;
+        var action = response.output.action;
         // switch and case
+        switch(action){
+          case "control_panel_open":
+                this.openControlPanel();
+        }
+        // open up the control panel (for change delivery)
+
 
         // else
         this.askSomething(response.text);
@@ -425,6 +415,12 @@ export class SimCmp implements OnInit {
       case "app":
         return this.selectedNotification.app;
     }
+  }
+
+  /*  Actions  */
+
+  openControlPanel(){
+
   }
 
 }

@@ -110,54 +110,57 @@ var SimCmp = (function () {
             console.log(obj.data);
             this.subjectRankings = obj.data;
         });
-        var barSender = new RGraph.Bar({
-            id: 'cvsSender',
-            data: data,
-            options: {
-                labels: this.subjectLabels,
-                textAccessible: true,
-                adjustable: true,
-                numyticks: 10,
-                ylabels: true,
-                ymax: 10,
-                shadowOffsetx: 1,
-                shadowOffsety: 1,
-                shadowBlur: 5,
-                gutterLeft: 5,
-                gutterRight: 5,
-                gutterTop: 50,
-                gutterBottom: 5,
-                ymin: 0.1,
-                scaleRound: false,
-            }
-        }).draw().on('onadjustend', function (obj) {
-            console.log(obj.data);
-            this.subjectRankings = obj.data;
+        /*var barSender = new RGraph.Bar({
+          id: 'cvsSender',
+          data: data,
+          options: {
+            labels: this.subjectLabels,
+            textAccessible: true,
+            adjustable: true,
+            numyticks: 10,
+            ylabels: true,
+            ymax: 10,
+            shadowOffsetx: 1,
+            shadowOffsety: 1,
+            shadowBlur: 5,
+            gutterLeft: 5,
+            gutterRight: 5,
+            gutterTop: 50,
+            gutterBottom: 5,
+            ymin: 0.1,
+            scaleRound: false,
+          }
+        }).draw().on('onadjustend', function (obj)
+        {
+          console.log(obj.data);
+          this.subjectRankings = obj.data;
         });
+    
         var barApp = new RGraph.Bar({
-            id: 'cvsApp',
-            data: data,
-            options: {
-                labels: this.subjectLabels,
-                textAccessible: true,
-                adjustable: true,
-                numyticks: 10,
-                ylabels: true,
-                ymax: 10,
-                shadowOffsetx: 1,
-                shadowOffsety: 1,
-                shadowBlur: 5,
-                gutterLeft: 5,
-                gutterRight: 5,
-                gutterTop: 50,
-                gutterBottom: 5,
-                ymin: 0.1,
-                scaleRound: false,
-            }
-        }).draw().on('onadjustend', function (obj) {
-            console.log(obj.data);
-            this.subjectRankings = obj.data;
-        });
+          id: 'cvsApp',
+          data: data,
+          options: {
+            labels: this.subjectLabels,
+            textAccessible: true,
+            adjustable: true,
+            numyticks: 10,
+            ylabels: true,
+            ymax: 10,
+            shadowOffsetx: 1,
+            shadowOffsety: 1,
+            shadowBlur: 5,
+            gutterLeft: 5,
+            gutterRight: 5,
+            gutterTop: 50,
+            gutterBottom: 5,
+            ymin: 0.1,
+            scaleRound: false,
+          }
+        }).draw().on('onadjustend', function (obj)
+        {
+          console.log(obj.data);
+          this.subjectRankings = obj.data;
+        });*/
     };
     /**
      * Speaks given text input and listens for a response
@@ -169,26 +172,6 @@ var SimCmp = (function () {
         this.synth.speak(msg);
         /*msg.onend = function(e) {
           this.activateSpeechSearch();
-        }.bind(this);*/
-    };
-    /**
-     * Fired when microphone button is pushed - goes to askSomething
-     */
-    SimCmp.prototype.askQuestion = function () {
-        this.askSomething('Do you think this notification is right?');
-        /*var synth = window.speechSynthesis;
-    
-        var voices = synth.getVoices();
-    
-        for(var i = 0; i < voices.length ; i++) {
-          console.log(voices[i])
-        }
-    
-        var msg = new SpeechSynthesisUtterance('Do you think this notification was delivered correctly?');
-        msg.voice = voices[3];
-        synth.speak(msg);
-        msg.onend = function(e) {
-          this.startListening();
         }.bind(this);*/
     };
     /**
@@ -321,12 +304,13 @@ var SimCmp = (function () {
     };
     SimCmp.prototype.beginConvo = function () {
         var _this = this;
+        this.lgModalControl.show();
         this.simService
             .beginConvoRequest()
             .subscribe(function (response) {
             console.log(response);
             _this.convoContext = response.context;
-            _this.askSomething("Greetings friend, how can I help?");
+            _this.askSomething("how can I help?");
             _this.activateSpeechSearch();
         });
     };
@@ -337,7 +321,13 @@ var SimCmp = (function () {
             .subscribe(function (response) {
             console.log(response);
             _this.convoContext = response.context;
+            var action = response.output.action;
             // switch and case
+            switch (action) {
+                case "control_panel_open":
+                    _this.openControlPanel();
+            }
+            // open up the control panel (for change delivery)
             // else
             _this.askSomething(response.text);
             _this.activateSpeechSearch();
@@ -360,8 +350,15 @@ var SimCmp = (function () {
                 return this.selectedNotification.app;
         }
     };
+    /*  Actions  */
+    SimCmp.prototype.openControlPanel = function () {
+    };
     return SimCmp;
 }());
+__decorate([
+    core_1.ViewChild('lgModalControl'),
+    __metadata("design:type", Object)
+], SimCmp.prototype, "lgModalControl", void 0);
 SimCmp = __decorate([
     core_1.Component({
         selector: "sim-cmp",
