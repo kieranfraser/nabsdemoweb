@@ -1,7 +1,7 @@
 <body class="size-1140 align-content-left">
   <div class="container" style="padding-left: 0px; margin-left: 0px; width: 100%; padding-right: 0px;">
     <div class="line">
-      <div id="content-wrapper" style="margin-left: 15%; margin-right: 15%; min-height: 98vh;">
+      <div id="content-wrapper" style="margin-left: 18%; margin-right: 18%; min-height: 98vh;">
         <!-- LEFT COLUMN -->
         <div class="s-12 m-4 l-3" style="max-height: 98vh; overflow: hidden">
           <div class="logo-box">
@@ -115,17 +115,17 @@
               <article *ngFor="let result of allResults; let i = index">
                 <div [ngSwitch]="result?.result">
                   <button type="button" *ngSwitchCase="'now'" class="btn btn-info btn-lg btn-circle btn-xl"
-                          style="background-color: green; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                          style="background-color: green; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); toggleChat(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
                   <button type="button" *ngSwitchCase="'break'" class="btn btn-info btn-lg btn-circle btn-xl"
-                          style="background-color: dodgerblue; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                          style="background-color: dodgerblue; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); toggleChat(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
                   <button type="button" *ngSwitchCase="'period'" class="btn btn-info btn-lg btn-circle btn-xl"
-                          style="background-color: purple; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                          style="background-color: purple; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); toggleChat(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
                   <button type="button" *ngSwitchCase="'little later'" class="btn btn-info btn-lg btn-circle btn-xl"
-                          style="background-color: yellow; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                          style="background-color: yellow; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); toggleChat(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
                   <button type="button" *ngSwitchCase="'much later'" class="btn btn-info btn-lg btn-circle btn-xl"
-                          style="background-color: red; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
+                          style="background-color: red; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); toggleChat(); setNotification(selectedUser.notifications[i], result.result)"><img style="background-color: white; border-radius: 25px;" src="./common/dist/img/notificationBlack.png"/></button>
                   <button type="button" *ngSwitchDefault class="btn btn-info btn-lg btn-circle btn-xl"
-                          style="background-color: white; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img src="./common/dist/img/notificationBlack.png"/></button>
+                          style="background-color: white; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px; box-shadow: 5px 5px 5px darkgrey;" (click)="lgModalNotifDetail.show(); toggleChat(); setNotification(selectedUser.notifications[i], result.result)"><img src="./common/dist/img/notificationBlack.png"/></button>
                 </div>
                 <!--<button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
                         style="background-color: white; display: block; position: absolute; left: 50%; margin: 0 0 0 -35px;" (click)="lgModalNotifDetail.show(); setNotification(selectedUser.notifications[i], result.result)"><img src="./common/dist/img/notification.png"/></button>-->
@@ -158,6 +158,64 @@
                 <a class="right" href="http://www.myresponsee.com" title="Responsee - lightweight responsive framework">Design and coding by Responsee Team</a>
               </div>
             </footer>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="showChat" style="position: absolute; right: 10px; top: 5px; width: 16%; z-index: 1051 !important;">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <span class="glyphicon glyphicon-comment"></span> Ask NAbs
+            <div class="btn-group pull-right">
+              <a type="button" class="btn btn-default btn-xs" (click)="isCollapsed = !isCollapsed; beginConvoMsg();">
+                <span class="glyphicon glyphicon-chevron-down"></span>
+              </a>
+            </div>
+          </div>
+          <div [collapse]="isCollapsed">
+            <div class="panel-body" #chatWindow  >
+              <ul class="chat">
+                <div *ngFor="let msg of messages; let i = index">
+                  <li *ngIf="isNabs(msg.author)" class="left clearfix" style="width: 100%;">
+                        <span class="chat-img pull-left">
+                          <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                    <div class="chat-body clearfix">
+                      <div class="header">
+                        <strong class="primary-font">{{msg.author}}</strong> <small class="pull-right text-muted">
+                        <span class="glyphicon glyphicon-time"></span>{{msg.time}}</small>
+                      </div>
+                      <p>
+                        {{msg.text}}
+                      </p>
+                    </div>
+                  </li>
+                  <li *ngIf="!isNabs(msg.author)" class="right clearfix" style="width: 100%;">
+                        <span class="chat-img pull-right">
+                          <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                    <div class="chat-body clearfix">
+                      <div class="header">
+                        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>{{msg.time}}</small>
+                        <strong class="pull-right primary-font">{{msg.author}}</strong>
+                      </div>
+                      <p>
+                        {{msg.text}}
+                      </p>
+                    </div>
+                  </li>
+                </div>
+              </ul>
+            </div>
+            <div class="panel-footer">
+              <div class="input-group">
+                <input #userMessageInput [(ngModel)]="usersMessage" (keyup.enter)="userResponse()" type="text"
+                       class="form-control input-sm" placeholder="Type your message here..." autofocus/>
+                <span class="input-group-btn">
+                      <button class="btn btn-warning btn-sm" id="chat-btn" (click)="userResponse()">
+                          Send</button>
+                  </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -307,11 +365,11 @@
     </div>
 
     <!-- Modal -->
-    <div bsModal #lgModalNotifDetail="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div bsModal #lgModalNotifDetail="bs-modal" class="modal fade" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content" *ngIf="selectedNotification != null">
           <div class="modal-header">
-            <button type="button" class="close pull-right" (click)="lgModalNotifDetail.hide()" aria-label="Close">
+            <button type="button" class="close pull-right" (click)="lgModalNotifDetail.hide(); toggleChat();" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
             <button type="button" class="btn btn-info btn-lg btn-circle btn-xl pull-right"
@@ -473,31 +531,34 @@
         <div class="modal-content">
           <div class="modal-header" style="text-align: center">
             <h2 class="modal-title pull-left">Control</h2>
-            <button type="button" class="close pull-right" (click)="lgModalSingleControl.hide()" aria-label="Close">
+
+            <button type="button" class="close pull-right" (click)="lgModalSingleControl.hide(); toggleChat();" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body" style="display: table; margin: 0 auto;">
-            <div style="text-align: center; float: right; margin: 5px; margin-left: 65px; margin-bottom: 35px">
-              <div id="cvs_rgraph_domtext_wrapper" class="rgraph_domtext_wrapper" style="overflow: visible; width: 500px; height: 250px; display: inline-block; position: relative;">
-                <!--<canvas id="cvs" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>-->
-                <canvas id="cvsSubject" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>
-            </div>
-            </div>
-
+          <div class="modal-body" style="height: 500px">
             <!--<div style="text-align: center; float: right; margin: 5px; margin-left: 65px; margin-bottom: 35px">
-              <div id="senderChart" class="rgraph_domtext_wrapper" style="overflow: visible; width: 500px; height: 250px; display: inline-block; position: relative;">
-                &lt;!&ndash;<canvas id="cvs" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>&ndash;&gt;
-                <canvas id="cvsSender" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>
-              </div>
-            </div>
+              <div id="cvs_rgraph_domtext_wrapper" class="rgraph_domtext_wrapper" style="overflow: visible; width: 500px; height: 250px; display: inline-block; position: relative;">
+                --><!--<canvas id="cvs" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>-->
+              <canvas id="cvsSubject" width="500" height="250">[No canvas support]</canvas>
+            <!--</div>
+          </div>-->
 
-            <div style="text-align: center; float: right; margin: 5px; margin-left: 65px; margin-bottom: 35px">
-              <div id="appChart" class="rgraph_domtext_wrapper" style="overflow: visible; width: 500px; height: 250px; display: inline-block; position: relative;">
-                &lt;!&ndash;<canvas id="cvs" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>&ndash;&gt;
-                <canvas id="cvsApp" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>
+              <!--<div style="text-align: center; float: right; margin: 5px; margin-left: 65px; margin-bottom: 35px">
+                <div id="senderChart" class="rgraph_domtext_wrapper" style="overflow: visible; width: 500px; height: 250px; display: inline-block; position: relative;">
+                  &lt;!&ndash;<canvas id="cvs" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>&ndash;&gt;
+                  <canvas id="cvsSender" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>
+                </div>
               </div>
-            </div>-->
+
+              <div style="text-align: center; float: right; margin: 5px; margin-left: 65px; margin-bottom: 35px">
+                <div id="appChart" class="rgraph_domtext_wrapper" style="overflow: visible; width: 500px; height: 250px; display: inline-block; position: relative;">
+                  &lt;!&ndash;<canvas id="cvs" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>&ndash;&gt;
+                  <canvas id="cvsApp" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>
+                </div>
+              </div>-->
+
+
           </div>
         </div>
       </div>

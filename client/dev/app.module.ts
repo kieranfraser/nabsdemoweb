@@ -16,7 +16,7 @@ import {SpinnerComponent} from "./todo/components/spinner-cmp";
 
 
 
-import { ModalModule } from 'ngx-bootstrap';
+import { ModalModule, CollapseModule } from 'ngx-bootstrap';
 import {SimService} from "./sim/services/sim-service";
 import {SimCmp} from "./sim/components/sim-cmp";
 import {simRouting} from "./sim/components/sim-route";
@@ -42,6 +42,7 @@ export const config = {
       AngularFireModule.initializeApp(config),
       FormsModule,
       ModalModule.forRoot(),
+      CollapseModule.forRoot(),
     ],
     declarations: [
       App,

@@ -16,6 +16,9 @@ require("rxjs/add/operator/take");
 var todo_service_1 = require("../../todo/services/todo-service");
 var router_1 = require("@angular/router");
 var speech_recognition_service_1 = require("../services/speech-recognition-service");
+var message_1 = require("../model/message");
+var NABS_AUTHOR = "NAbs";
+var USER_AUTHOR = "Me";
 var SimCmp = (function () {
     function SimCmp(af, todoService, router, simService, speechService) {
         var _this = this;
@@ -25,6 +28,10 @@ var SimCmp = (function () {
         this.simService = simService;
         this.speechService = speechService;
         this.title = "NAbs";
+        this.isCollapsed = true;
+        this.messages = [];
+        this.messageNumber = 0;
+        this.showChat = false;
         this.selectedUser = null;
         this.selectedImage = null;
         this.allResults = null;
@@ -33,7 +40,6 @@ var SimCmp = (function () {
         this.selectedNotification = null;
         this.selectedNotificationEvents = null;
         this.selectedResult = null;
-        this.firstQuestion = "Was this notification delivered correctly?";
         this.alertSenderInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
             "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
             "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
@@ -45,8 +51,12 @@ var SimCmp = (function () {
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP"];
         this.alertOptions = ["NOW", "VERYSOON", "SOON", "LATER", "MUCHLATER"];
         this.defaultParams = null;
-        this.subjectLabels = ["family", "work", "social", "interest"];
+        this.featureValueLabels = ["family", "work", "social", "interest"];
         this.subjectRankings = [5, 5, 5, 5];
+        this.resultLabels = ["now", "v. soon", "soon", "later", "m. later"];
+        this.resultRankings = [10, 8, 6, 4, 2];
+        this.changeDelGraph1Labels = ["sender", "subject", "app", "result"];
+        this.changeDelGraph1Data = [5, 5, 5, 6];
         this.subscriptionOne = this.todoService.selectedUser$.subscribe(function (selectedUser) {
             _this.selectedUser = selectedUser;
             console.log("sel user");
@@ -59,6 +69,8 @@ var SimCmp = (function () {
         this.synth = window.speechSynthesis;
         var voices = this.synth.getVoices();
         this.voice = voices[3];
+        var m = new message_1.Message(1, "first message", "Kieran", "12:30", "imagesrc");
+        this.messages.push(m);
     }
     SimCmp.prototype.ngOnInit = function () {
         var _this = this;
@@ -81,35 +93,84 @@ var SimCmp = (function () {
         }
         this.svgGraph();
     };
+    SimCmp.prototype.ngAfterViewChecked = function () {
+        try {
+            this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
+            this.userMessageInput.nativeElement.focus();
+        }
+        catch (err) { }
+    };
+    /**
+     * Toggle the chat box in and out of view depending on modal selected.
+     */
+    SimCmp.prototype.toggleChat = function () {
+        if (this.showChat == true) {
+            this.showChat = false;
+        }
+        else {
+            this.showChat = true;
+        }
+    };
+    /**
+     * Used in chat box for determining right or left side.
+     * @param author
+     * @returns {boolean}
+     */
+    SimCmp.prototype.isNabs = function (author) {
+        if (author == "NAbs")
+            return true;
+        else
+            return false;
+    };
     /**
      * Initialization of the interactive graph
      */
     SimCmp.prototype.svgGraph = function () {
         var data = this.subjectRankings;
-        var barSubject = new RGraph.Bar({
+        var line = new RGraph.Line({
             id: 'cvsSubject',
-            data: data,
+            data: this.changeDelGraph1Data,
             options: {
-                labels: this.subjectLabels,
                 textAccessible: true,
+                labels: this.changeDelGraph1Labels,
                 adjustable: true,
-                numyticks: 10,
-                ylabels: true,
-                ymax: 10,
-                shadowOffsetx: 1,
-                shadowOffsety: 1,
-                shadowBlur: 5,
                 gutterLeft: 5,
                 gutterRight: 5,
                 gutterTop: 50,
                 gutterBottom: 5,
-                ymin: 0.1,
-                scaleRound: false,
+                numyticks: 10,
+                ylabels: true,
+                xlabels: true,
+                labelsOffsetx: 5,
+                labelsOffsety: 5
             }
         }).draw().on('onadjustend', function (obj) {
-            console.log(obj.data);
-            this.subjectRankings = obj.data;
+            this.changeDelGraph1Data = obj.data;
         });
+        /*var barSubject = new RGraph.Bar({
+          id: 'cvsSubject',
+          data: this.changeDelGraph1Data,
+          options: {
+            labels: this.changeDelGraph1Labels,
+            textAccessible: true,
+            adjustable: true,
+            numyticks: 10,
+            ylabels: true,
+            ymax: 10,
+            shadowOffsetx: 1,
+            shadowOffsety: 1,
+            shadowBlur: 5,
+            gutterLeft: 5,
+            gutterRight: 5,
+            gutterTop: 50,
+            gutterBottom: 5,
+            ymin: 0.1,
+            scaleRound: false,
+          }
+        }).draw().on('onadjustend', function (obj)
+        {
+          this.changeDelGraph1Data = obj.data;
+        });*/
         /*var barSender = new RGraph.Bar({
           id: 'cvsSender',
           data: data,
@@ -215,6 +276,17 @@ var SimCmp = (function () {
         });
     };
     /**
+     * Called when the user responds via the chat window - similar to above for
+     * speech.
+     * @param response
+     */
+    SimCmp.prototype.userResponse = function () {
+        var response = this.usersMessage;
+        this.usersMessage = "";
+        this.messages.push(new message_1.Message(this.messageNumber++, response, USER_AUTHOR, Date.now().toString(), "img"));
+        this.continueConvoMsg(response);
+    };
+    /**
      * Navigates back to previous page correctly.
      */
     SimCmp.prototype.switchUser = function () {
@@ -302,18 +374,47 @@ var SimCmp = (function () {
     SimCmp.prototype.initControl = function () {
         console.log("init the controls");
     };
+    /**
+     * Called when the user presses the microphone button - initiates watson convo
+     * and gets response back.
+     */
     SimCmp.prototype.beginConvo = function () {
         var _this = this;
-        this.lgModalControl.show();
+        this.messages = [];
+        this.messageNumber = 0;
+        this.convoContext = null;
+        //this.lgModalControl.show();
         this.simService
             .beginConvoRequest()
             .subscribe(function (response) {
             console.log(response);
             _this.convoContext = response.context;
-            _this.askSomething("how can I help?");
+            _this.askSomething(response.text);
             _this.activateSpeechSearch();
         });
     };
+    /**
+     * Same as above but for the chat box instead of speech.
+     */
+    SimCmp.prototype.beginConvoMsg = function () {
+        var _this = this;
+        this.messages = [];
+        this.messageNumber = 0;
+        this.convoContext = null;
+        this.simService
+            .beginConvoRequest()
+            .subscribe(function (response) {
+            console.log(response);
+            _this.convoContext = response.context;
+            _this.messages.push(new message_1.Message(_this.messageNumber, response.text, NABS_AUTHOR, Date.now().toString(), "img"));
+            _this.userMessageInput.nativeElement.focus();
+        });
+    };
+    /**
+     * Conversation with watson is continued - actions are in a switch statement.
+     * Ends the conversation.
+     * @param userResponse
+     */
     SimCmp.prototype.continueConvo = function (userResponse) {
         var _this = this;
         this.simService
@@ -324,13 +425,38 @@ var SimCmp = (function () {
             var action = response.output.action;
             // switch and case
             switch (action) {
-                case "control_panel_open":
-                    _this.openControlPanel();
+                case "open_control_panel":
+                    _this.lgModalNotifDetail.hide();
+                    _this.lgModalSingleControl.show();
             }
             // open up the control panel (for change delivery)
             // else
             _this.askSomething(response.text);
             _this.activateSpeechSearch();
+        });
+    };
+    /**
+     * Same as above but for the chat box.
+     * @param userResponse
+     */
+    SimCmp.prototype.continueConvoMsg = function (userResponse) {
+        var _this = this;
+        this.simService
+            .continueConvoRequest(userResponse, this.convoContext)
+            .subscribe(function (response) {
+            console.log(response);
+            _this.convoContext = response.context;
+            var action = response.output.action;
+            // switch and case
+            switch (action) {
+                case "open_control_panel":
+                    _this.lgModalNotifDetail.hide();
+                    _this.lgModalSingleControl.show();
+                    break;
+            }
+            // open up the control panel (for change delivery)
+            // else
+            _this.messages.push(new message_1.Message(_this.messageNumber++, response.text, NABS_AUTHOR, Date.now().toString(), "img"));
         });
     };
     /* Change delivery functionality */
@@ -350,20 +476,29 @@ var SimCmp = (function () {
                 return this.selectedNotification.app;
         }
     };
-    /*  Actions  */
-    SimCmp.prototype.openControlPanel = function () {
-    };
     return SimCmp;
 }());
 __decorate([
-    core_1.ViewChild('lgModalControl'),
+    core_1.ViewChild('lgModalSingleControl'),
     __metadata("design:type", Object)
-], SimCmp.prototype, "lgModalControl", void 0);
+], SimCmp.prototype, "lgModalSingleControl", void 0);
+__decorate([
+    core_1.ViewChild('lgModalNotifDetail'),
+    __metadata("design:type", Object)
+], SimCmp.prototype, "lgModalNotifDetail", void 0);
+__decorate([
+    core_1.ViewChild('userMessageInput'),
+    __metadata("design:type", Object)
+], SimCmp.prototype, "userMessageInput", void 0);
+__decorate([
+    core_1.ViewChild('chatWindow'),
+    __metadata("design:type", Object)
+], SimCmp.prototype, "chatWindow", void 0);
 SimCmp = __decorate([
     core_1.Component({
         selector: "sim-cmp",
         templateUrl: "sim/templates/sim.html",
-        styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css"]
+        styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css", "sim/styles/chat.css"]
     }),
     __metadata("design:paramtypes", [angularfire2_1.AngularFire, todo_service_1.TodoService, router_1.Router,
         sim_service_1.SimService, speech_recognition_service_1.SpeechRecognitionService])

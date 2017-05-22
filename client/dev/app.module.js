@@ -49,6 +49,7 @@ AppModule = __decorate([
             angularfire2_1.AngularFireModule.initializeApp(exports.config),
             forms_1.FormsModule,
             ngx_bootstrap_1.ModalModule.forRoot(),
+            ngx_bootstrap_1.CollapseModule.forRoot(),
         ],
         declarations: [
             app_1.App,

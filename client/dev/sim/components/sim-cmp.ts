@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit, ViewChild
+  OnInit, ViewChild, AfterViewChecked
 } from "@angular/core";
 
 import {
@@ -24,14 +24,28 @@ import {SpinnerComponent} from "../../todo/components/spinner-cmp";
 import {Router} from "@angular/router";
 import {Result} from "../model/result";
 import {SpeechRecognitionService} from "../services/speech-recognition-service";
+import {Message} from "../model/message";
+
+const NABS_AUTHOR: string = "NAbs";
+const USER_AUTHOR: string = "Me";
 
 @Component({
   selector: "sim-cmp",
   templateUrl: "sim/templates/sim.html",
-  styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css"]
+  styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css", "sim/styles/chat.css"]
 })
-export class SimCmp implements OnInit {
+export class SimCmp implements OnInit, AfterViewChecked{
   title: string = "NAbs";
+
+  /**
+   * Used for the chat box collapse
+   * @type {boolean}
+   */
+  usersMessage: string;
+  public isCollapsed:boolean = true;
+  private messages: Message[] = [];
+  private messageNumber = 0;
+  private showChat = false;
 
   subscriptionOne: Subscription;
   subscriptionTwo: Subscription;
@@ -51,9 +65,10 @@ export class SimCmp implements OnInit {
   private selectedNotificationEvents: any = null;
   private selectedResult: string = null;
 
-  @ViewChild('lgModalControl') lgModalControl;
-
-  private firstQuestion = "Was this notification delivered correctly?";
+  @ViewChild('lgModalSingleControl') lgModalSingleControl;
+  @ViewChild('lgModalNotifDetail') lgModalNotifDetail;
+  @ViewChild('userMessageInput') userMessageInput;
+  @ViewChild('chatWindow') chatWindow;
 
   private alertSenderInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
   "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
@@ -76,8 +91,17 @@ export class SimCmp implements OnInit {
   private synth: any;
   private voice: any;
 
-  private subjectLabels = ["family", "work", "social", "interest"];
+  private featureValueLabels = ["family", "work", "social", "interest"];
   private subjectRankings = [5, 5, 5, 5];
+
+  private resultLabels = ["now", "v. soon", "soon", "later", "m. later"];
+  private resultRankings = [10, 8, 6, 4, 2];
+
+  private changeDelGraph1Labels = ["sender", "subject", "app", "result"];
+  private changeDelGraph1Data = [5, 5, 5, 6];
+
+  private selectedFeature;
+  private selectedTime;
 
   // Phase of questioning
   /* Step 1: ask if the notification is correct
@@ -104,6 +128,8 @@ export class SimCmp implements OnInit {
     var voices = this.synth.getVoices();
     this.voice = voices[3];
 
+    var m = new Message(1, "first message", "Kieran", "12:30", "imagesrc");
+    this.messages.push(m);
   }
 
   ngOnInit() {
@@ -128,17 +154,70 @@ export class SimCmp implements OnInit {
     this.svgGraph();
   }
 
+  ngAfterViewChecked(){
+    try{
+      this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
+      this.userMessageInput.nativeElement.focus();
+    } catch(err){}
+  }
+
+  /**
+   * Toggle the chat box in and out of view depending on modal selected.
+   */
+  toggleChat(){
+    if(this.showChat == true){
+      this.showChat = false;
+    }
+    else{
+      this.showChat = true;
+    }
+  }
+
+  /**
+   * Used in chat box for determining right or left side.
+   * @param author
+   * @returns {boolean}
+   */
+  isNabs(author: string){
+    if(author == "NAbs")
+      return true;
+    else
+      return false;
+  }
+
   /**
    * Initialization of the interactive graph
    */
   svgGraph(){
     var data = this.subjectRankings;
 
-    var barSubject = new RGraph.Bar({
+    var line = new RGraph.Line({
       id: 'cvsSubject',
-      data: data,
+      data: this.changeDelGraph1Data,
       options: {
-        labels: this.subjectLabels,
+        textAccessible: true,
+        labels: this.changeDelGraph1Labels,
+        adjustable: true,
+        gutterLeft: 5,
+        gutterRight: 5,
+        gutterTop: 50,
+        gutterBottom: 5,
+        numyticks: 10,
+        ylabels: true,
+        xlabels: true
+        labelsOffsetx: 5,
+        labelsOffsety: 5
+      }
+    }).draw().on('onadjustend', function (obj)
+    {
+      this.changeDelGraph1Data = obj.data;
+    });
+
+    /*var barSubject = new RGraph.Bar({
+      id: 'cvsSubject',
+      data: this.changeDelGraph1Data,
+      options: {
+        labels: this.changeDelGraph1Labels,
         textAccessible: true,
         adjustable: true,
         numyticks: 10,
@@ -156,9 +235,8 @@ export class SimCmp implements OnInit {
       }
     }).draw().on('onadjustend', function (obj)
     {
-      console.log(obj.data);
-      this.subjectRankings = obj.data;
-    });
+      this.changeDelGraph1Data = obj.data;
+    });*/
 
     /*var barSender = new RGraph.Bar({
       id: 'cvsSender',
@@ -269,6 +347,18 @@ export class SimCmp implements OnInit {
   }
 
   /**
+   * Called when the user responds via the chat window - similar to above for
+   * speech.
+   * @param response
+   */
+  userResponse(): void{
+    var response = this.usersMessage;
+    this.usersMessage = "";
+    this.messages.push(new Message(this.messageNumber++, response, USER_AUTHOR, Date.now().toString(), "img"));
+    this.continueConvoMsg(response);
+  }
+
+  /**
    * Navigates back to previous page correctly.
    */
   switchUser(){
@@ -362,19 +452,48 @@ export class SimCmp implements OnInit {
     console.log("init the controls");
   }
 
+  /**
+   * Called when the user presses the microphone button - initiates watson convo
+   * and gets response back.
+   */
   beginConvo(){
 
-    this.lgModalControl.show();
+    this.messages = [];
+    this.messageNumber = 0;
+    this.convoContext = null;
+    //this.lgModalControl.show();
     this.simService
       .beginConvoRequest()
       .subscribe((response) => {
         console.log(response);
         this.convoContext = response.context;
-        this.askSomething("how can I help?");
+        this.askSomething(response.text);
         this.activateSpeechSearch();
       });
   }
 
+  /**
+   * Same as above but for the chat box instead of speech.
+   */
+  beginConvoMsg(){
+    this.messages = [];
+    this.messageNumber = 0;
+    this.convoContext = null;
+    this.simService
+      .beginConvoRequest()
+      .subscribe((response) => {
+        console.log(response);
+        this.convoContext = response.context;
+        this.messages.push(new Message(this.messageNumber, response.text, NABS_AUTHOR, Date.now().toString(), "img"));
+        this.userMessageInput.nativeElement.focus();
+      });
+  }
+
+  /**
+   * Conversation with watson is continued - actions are in a switch statement.
+   * Ends the conversation.
+   * @param userResponse
+   */
   continueConvo(userResponse: string){
     this.simService
       .continueConvoRequest(userResponse, this.convoContext)
@@ -384,8 +503,9 @@ export class SimCmp implements OnInit {
         var action = response.output.action;
         // switch and case
         switch(action){
-          case "control_panel_open":
-                this.openControlPanel();
+          case "open_control_panel":
+            this.lgModalNotifDetail.hide();
+            this.lgModalSingleControl.show();
         }
         // open up the control panel (for change delivery)
 
@@ -393,6 +513,32 @@ export class SimCmp implements OnInit {
         // else
         this.askSomething(response.text);
         this.activateSpeechSearch();
+      });
+  }
+
+  /**
+   * Same as above but for the chat box.
+   * @param userResponse
+   */
+  continueConvoMsg(userResponse: string){
+    this.simService
+      .continueConvoRequest(userResponse, this.convoContext)
+      .subscribe((response) => {
+        console.log(response);
+        this.convoContext = response.context;
+        var action = response.output.action;
+        // switch and case
+        switch(action){
+          case "open_control_panel":
+            this.lgModalNotifDetail.hide();
+            this.lgModalSingleControl.show();
+            break;
+        }
+        // open up the control panel (for change delivery)
+
+
+        // else
+        this.messages.push(new Message(this.messageNumber++, response.text, NABS_AUTHOR, Date.now().toString(), "img"))
       });
   }
 
@@ -419,8 +565,5 @@ export class SimCmp implements OnInit {
 
   /*  Actions  */
 
-  openControlPanel(){
-
-  }
 
 }
