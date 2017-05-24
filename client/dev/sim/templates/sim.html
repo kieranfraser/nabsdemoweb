@@ -46,7 +46,13 @@
           </div>
         </div>
 
-        <div class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center;">
+        <div *ngIf="view == 'controlPanel'" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden">
+          <div style="padding: 50px; display: inline-block; background-color: white;">
+            <canvas id="cvsSubject" width="650" height="250">[No canvas support]</canvas>
+          </div>
+        </div>
+
+        <div *ngIf="view == 'normal'" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center;">
           <div class="box" style="background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; padding: 0px">
             <!-- HEADER -->
             <!-- CAROUSEL -->
@@ -537,10 +543,13 @@
             </button>
           </div>
           <div class="modal-body" style="height: 500px">
+
+
             <!--<div style="text-align: center; float: right; margin: 5px; margin-left: 65px; margin-bottom: 35px">
               <div id="cvs_rgraph_domtext_wrapper" class="rgraph_domtext_wrapper" style="overflow: visible; width: 500px; height: 250px; display: inline-block; position: relative;">
                 --><!--<canvas id="cvs" width="500" height="250" style="position: absolute; left: 0px; top: 0px; display: inline; float: none; cursor: pointer;">[No canvas support]</canvas>-->
-              <canvas id="cvsSubject" width="500" height="250">[No canvas support]</canvas>
+              <!--<canvas id="cvsSubject" width="500" height="250">[No canvas support]</canvas>-->
+            <!--<div style="width: 750px; height: 300px" id="cvsSubject"></div>-->
             <!--</div>
           </div>-->
 

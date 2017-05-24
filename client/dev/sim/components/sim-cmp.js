@@ -75,6 +75,7 @@ var SimCmp = (function () {
     SimCmp.prototype.ngOnInit = function () {
         var _this = this;
         console.log("init");
+        this.view = "normal";
         if (this.selectedUser == null) {
             this.router.navigate(['../']);
         }
@@ -91,7 +92,6 @@ var SimCmp = (function () {
                 });
             });
         }
-        this.svgGraph();
     };
     SimCmp.prototype.ngAfterViewChecked = function () {
         try {
@@ -99,7 +99,11 @@ var SimCmp = (function () {
             this.userMessageInput.nativeElement.focus();
         }
         catch (err) { }
+        if (this.view == "controlPanel") {
+            this.svgGraph();
+        }
     };
+    SimCmp.prototype.ngAfterViewInit = function () { };
     /**
      * Toggle the chat box in and out of view depending on modal selected.
      */
@@ -134,10 +138,10 @@ var SimCmp = (function () {
                 textAccessible: true,
                 labels: this.changeDelGraph1Labels,
                 adjustable: true,
-                gutterLeft: 5,
-                gutterRight: 5,
+                gutterLeft: 25,
+                gutterRight: 25,
                 gutterTop: 50,
-                gutterBottom: 5,
+                gutterBottom: 25,
                 numyticks: 10,
                 ylabels: true,
                 xlabels: true,
@@ -451,7 +455,8 @@ var SimCmp = (function () {
             switch (action) {
                 case "open_control_panel":
                     _this.lgModalNotifDetail.hide();
-                    _this.lgModalSingleControl.show();
+                    //this.lgModalSingleControl.show();
+                    _this.view = "controlPanel";
                     break;
             }
             // open up the control panel (for change delivery)

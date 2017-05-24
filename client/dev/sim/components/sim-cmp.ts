@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit, ViewChild, AfterViewChecked
+  OnInit, ViewChild, AfterViewChecked, AfterViewInit
 } from "@angular/core";
 
 import {
@@ -34,7 +34,7 @@ const USER_AUTHOR: string = "Me";
   templateUrl: "sim/templates/sim.html",
   styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css", "sim/styles/chat.css"]
 })
-export class SimCmp implements OnInit, AfterViewChecked{
+export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
   title: string = "NAbs";
 
   /**
@@ -103,6 +103,8 @@ export class SimCmp implements OnInit, AfterViewChecked{
   private selectedFeature;
   private selectedTime;
 
+  private view: string;
+
   // Phase of questioning
   /* Step 1: ask if the notification is correct
   *  Step 2: ask if it should have been delivered sooner or later
@@ -134,6 +136,7 @@ export class SimCmp implements OnInit, AfterViewChecked{
 
   ngOnInit() {
     console.log("init");
+    this.view = "normal";
     if(this.selectedUser==null){
       this.router.navigate(['../']);
     }
@@ -150,8 +153,6 @@ export class SimCmp implements OnInit, AfterViewChecked{
             });
         });
     }
-
-    this.svgGraph();
   }
 
   ngAfterViewChecked(){
@@ -159,8 +160,12 @@ export class SimCmp implements OnInit, AfterViewChecked{
       this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
       this.userMessageInput.nativeElement.focus();
     } catch(err){}
+    if(this.view == "controlPanel"){
+      this.svgGraph();
+    }
   }
 
+  ngAfterViewInit(){}
   /**
    * Toggle the chat box in and out of view depending on modal selected.
    */
@@ -198,13 +203,13 @@ export class SimCmp implements OnInit, AfterViewChecked{
         textAccessible: true,
         labels: this.changeDelGraph1Labels,
         adjustable: true,
-        gutterLeft: 5,
-        gutterRight: 5,
+        gutterLeft: 25,
+        gutterRight: 25,
         gutterTop: 50,
-        gutterBottom: 5,
+        gutterBottom: 25,
         numyticks: 10,
         ylabels: true,
-        xlabels: true
+        xlabels: true,
         labelsOffsetx: 5,
         labelsOffsety: 5
       }
@@ -531,7 +536,8 @@ export class SimCmp implements OnInit, AfterViewChecked{
         switch(action){
           case "open_control_panel":
             this.lgModalNotifDetail.hide();
-            this.lgModalSingleControl.show();
+            //this.lgModalSingleControl.show();
+            this.view = "controlPanel";
             break;
         }
         // open up the control panel (for change delivery)
