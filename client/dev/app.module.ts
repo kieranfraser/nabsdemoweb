@@ -21,6 +21,7 @@ import {SimService} from "./sim/services/sim-service";
 import {SimCmp} from "./sim/components/sim-cmp";
 import {simRouting} from "./sim/components/sim-route";
 import {SpeechRecognitionService} from "./sim/services/speech-recognition-service";
+import {ControlCmp} from "./sim/components/control-cmp";
 
 export const config = {
   apiKey: "AIzaSyBuH2Fjok4gt7ouDB2tz39DU51DFEaYcY0",
@@ -49,6 +50,7 @@ export const config = {
       HomeCmp,
       TodoCmp,
       SimCmp,
+      ControlCmp,
       SpinnerComponent,
     ],
     providers: [

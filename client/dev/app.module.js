@@ -24,6 +24,7 @@ var sim_service_1 = require("./sim/services/sim-service");
 var sim_cmp_1 = require("./sim/components/sim-cmp");
 var sim_route_1 = require("./sim/components/sim-route");
 var speech_recognition_service_1 = require("./sim/services/speech-recognition-service");
+var control_cmp_1 = require("./sim/components/control-cmp");
 exports.config = {
     apiKey: "AIzaSyBuH2Fjok4gt7ouDB2tz39DU51DFEaYcY0",
     authDomain: "nabsdemo.firebaseapp.com",
@@ -56,6 +57,7 @@ AppModule = __decorate([
             home_cmp_1.HomeCmp,
             todo_cmp_1.TodoCmp,
             sim_cmp_1.SimCmp,
+            control_cmp_1.ControlCmp,
             spinner_cmp_1.SpinnerComponent,
         ],
         providers: [

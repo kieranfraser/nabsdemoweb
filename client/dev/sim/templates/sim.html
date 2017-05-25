@@ -29,11 +29,16 @@
             <div *ngIf="users?.length != 0 && selectedUser == null" style="text-align: center; margin-top: 20px; color: white;">
               <h4>Select a user:</h4>
             </div>
-            <div *ngIf="selectedUser!=null" style="text-align: center; margin-top: 20px;">
+            <div *ngIf="selectedUser!=null && view == 'normal'" style="text-align: center; margin-top: 20px;">
               <img src="./common/dist/img/{{selectedImage}}.png" style="max-width: 100%;" alt="No user selected.">
               <div style="color: white; margin-top: 20px"><h4>Selected User</h4></div>
               <button style="margin-top: 20px;" type="button" class="btn btn-primary" (click)="switchUser()">Switch User</button>
               <button style="margin-top: 20px;" type="button" class="btn btn-success" (click)="fireAllParams()">Fire Again</button>
+            </div>
+            <div *ngIf="view == 'controlPanel'" style="text-align: center; margin-top: 20px;">
+              <img src="./common/dist/img/{{selectedImage}}.png" style="max-width: 100%;" alt="No user selected.">
+              <button style="margin-top: 20px;" type="button" class="btn btn-primary" (click)="switchUser()">Switch User</button>
+              <button style="margin-top: 20px;" type="button" class="btn btn-success" (click)="closeControl()">Done</button>
             </div>
           </div>
         </div>
@@ -47,9 +52,13 @@
         </div>
 
         <div *ngIf="view == 'controlPanel'" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden">
-          <div style="padding: 50px; display: inline-block; background-color: white;">
-            <canvas id="cvsSubject" width="650" height="250">[No canvas support]</canvas>
-          </div>
+          <control-cmp [data]="changeDelGraph1Data" [labels]="changeDelGraph1Labels"
+                       [selectedNotification]="selectedNotification" [deliveryDirection]="selectedTime"
+                       [notificationFeature]="selectedFeature"
+                       [notificationEvents]="selectedNotificationEvents"
+                       [result]="selectedResult"
+                       [user]="selectedUser"
+                       [params]="alertParams" style="min-height: 98vh; background-color: white;">Control not working</control-cmp>
         </div>
 
         <div *ngIf="view == 'normal'" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center;">
@@ -226,6 +235,7 @@
         </div>
       </div>
     </div>
+
     <img id="background" src="./common/dist/img/background.jpeg" alt="">
 
     <div bsModal #lgModalInfo="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">

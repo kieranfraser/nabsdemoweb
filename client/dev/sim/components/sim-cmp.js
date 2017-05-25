@@ -57,6 +57,9 @@ var SimCmp = (function () {
         this.resultRankings = [10, 8, 6, 4, 2];
         this.changeDelGraph1Labels = ["sender", "subject", "app", "result"];
         this.changeDelGraph1Data = [5, 5, 5, 6];
+        this.selectedFeature = "sender";
+        this.selectedTime = "sooner";
+        this.resultLineGraph = null;
         this.subscriptionOne = this.todoService.selectedUser$.subscribe(function (selectedUser) {
             _this.selectedUser = selectedUser;
             console.log("sel user");
@@ -69,13 +72,11 @@ var SimCmp = (function () {
         this.synth = window.speechSynthesis;
         var voices = this.synth.getVoices();
         this.voice = voices[3];
-        var m = new message_1.Message(1, "first message", "Kieran", "12:30", "imagesrc");
-        this.messages.push(m);
     }
     SimCmp.prototype.ngOnInit = function () {
         var _this = this;
         console.log("init");
-        this.view = "normal";
+        this.view = "controlPanel";
         if (this.selectedUser == null) {
             this.router.navigate(['../']);
         }
@@ -100,7 +101,6 @@ var SimCmp = (function () {
         }
         catch (err) { }
         if (this.view == "controlPanel") {
-            this.svgGraph();
         }
     };
     SimCmp.prototype.ngAfterViewInit = function () { };
@@ -125,107 +125,6 @@ var SimCmp = (function () {
             return true;
         else
             return false;
-    };
-    /**
-     * Initialization of the interactive graph
-     */
-    SimCmp.prototype.svgGraph = function () {
-        var data = this.subjectRankings;
-        var line = new RGraph.Line({
-            id: 'cvsSubject',
-            data: this.changeDelGraph1Data,
-            options: {
-                textAccessible: true,
-                labels: this.changeDelGraph1Labels,
-                adjustable: true,
-                gutterLeft: 25,
-                gutterRight: 25,
-                gutterTop: 50,
-                gutterBottom: 25,
-                numyticks: 10,
-                ylabels: true,
-                xlabels: true,
-                labelsOffsetx: 5,
-                labelsOffsety: 5
-            }
-        }).draw().on('onadjustend', function (obj) {
-            this.changeDelGraph1Data = obj.data;
-        });
-        /*var barSubject = new RGraph.Bar({
-          id: 'cvsSubject',
-          data: this.changeDelGraph1Data,
-          options: {
-            labels: this.changeDelGraph1Labels,
-            textAccessible: true,
-            adjustable: true,
-            numyticks: 10,
-            ylabels: true,
-            ymax: 10,
-            shadowOffsetx: 1,
-            shadowOffsety: 1,
-            shadowBlur: 5,
-            gutterLeft: 5,
-            gutterRight: 5,
-            gutterTop: 50,
-            gutterBottom: 5,
-            ymin: 0.1,
-            scaleRound: false,
-          }
-        }).draw().on('onadjustend', function (obj)
-        {
-          this.changeDelGraph1Data = obj.data;
-        });*/
-        /*var barSender = new RGraph.Bar({
-          id: 'cvsSender',
-          data: data,
-          options: {
-            labels: this.subjectLabels,
-            textAccessible: true,
-            adjustable: true,
-            numyticks: 10,
-            ylabels: true,
-            ymax: 10,
-            shadowOffsetx: 1,
-            shadowOffsety: 1,
-            shadowBlur: 5,
-            gutterLeft: 5,
-            gutterRight: 5,
-            gutterTop: 50,
-            gutterBottom: 5,
-            ymin: 0.1,
-            scaleRound: false,
-          }
-        }).draw().on('onadjustend', function (obj)
-        {
-          console.log(obj.data);
-          this.subjectRankings = obj.data;
-        });
-    
-        var barApp = new RGraph.Bar({
-          id: 'cvsApp',
-          data: data,
-          options: {
-            labels: this.subjectLabels,
-            textAccessible: true,
-            adjustable: true,
-            numyticks: 10,
-            ylabels: true,
-            ymax: 10,
-            shadowOffsetx: 1,
-            shadowOffsety: 1,
-            shadowBlur: 5,
-            gutterLeft: 5,
-            gutterRight: 5,
-            gutterTop: 50,
-            gutterBottom: 5,
-            ymin: 0.1,
-            scaleRound: false,
-          }
-        }).draw().on('onadjustend', function (obj)
-        {
-          console.log(obj.data);
-          this.subjectRankings = obj.data;
-        });*/
     };
     /**
      * Speaks given text input and listens for a response
@@ -313,8 +212,6 @@ var SimCmp = (function () {
             .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
             .subscribe(function (allResults) {
             _this.allResults = allResults;
-            console.log("all results");
-            console.log(_this.allResults);
         });
     };
     SimCmp.prototype.setNotification = function (notification, result) {
@@ -373,10 +270,11 @@ var SimCmp = (function () {
         return false;
     };
     /**
-     * Inits the secondary control modal (from within the single notification view.
+     * Closes the control panel view
      */
-    SimCmp.prototype.initControl = function () {
-        console.log("init the controls");
+    SimCmp.prototype.closeControl = function () {
+        this.view = 'normal';
+        this.showChat = false;
     };
     /**
      * Called when the user presses the microphone button - initiates watson convo
@@ -457,6 +355,8 @@ var SimCmp = (function () {
                     _this.lgModalNotifDetail.hide();
                     //this.lgModalSingleControl.show();
                     _this.view = "controlPanel";
+                    _this.selectedTime = response.context.delivery_time;
+                    _this.selectedFeature = response.context.notification_feature;
                     break;
             }
             // open up the control panel (for change delivery)

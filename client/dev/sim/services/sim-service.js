@@ -25,6 +25,7 @@ var SimService = (function () {
         this.baseUrlResult = this.baseLocal + '/result';
         this.baseUrlParams = this.baseLocal + '/params';
         this.baseUrlResultParams = this.baseLocal + '/resultparams';
+        this.baseUrlResultChangeDelivery = this.baseLocal + '/resultforchangedelivery';
         this.baseUrlNotifEvents = this.baseLocal + '/notificationevents';
         this.baseUrlBeginConvo = this.baseLocal + '/beginconvo';
         this.baseUrlContinueConvo = this.baseLocal + '/continueconvo';
@@ -35,6 +36,11 @@ var SimService = (function () {
     };
     SimService.prototype.getResultWithAlertParams = function (userId, alertParams) {
         return this._http.get(this.baseUrlResultParams + "?user=" + userId + "&params=" + alertParams)
+            .map(function (r) { return r.json(); });
+    };
+    SimService.prototype.getResultForChangeDelivery = function (userId, notificationId, alertParams, notificationFeature, ranking) {
+        return this._http.get(this.baseUrlResultChangeDelivery + "?user=" + userId + "&notificationId=" + notificationId
+            + "&ruleParams=" + alertParams + "&notificationFeature=" + notificationFeature + "&ranking=" + ranking)
             .map(function (r) { return r.json(); });
     };
     SimService.prototype.getDefaultAlertParams = function () {

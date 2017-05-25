@@ -26,6 +26,7 @@ export class SimService {
   private baseUrlResult = this.baseLocal+'/result';
   private baseUrlParams = this.baseLocal+'/params';
   private baseUrlResultParams = this.baseLocal+'/resultparams';
+  private baseUrlResultChangeDelivery = this.baseLocal+'/resultforchangedelivery';
   private baseUrlNotifEvents = this.baseLocal+'/notificationevents';
   private baseUrlBeginConvo = this.baseLocal+'/beginconvo';
   private baseUrlContinueConvo = this.baseLocal+'/continueconvo';
@@ -39,6 +40,13 @@ export class SimService {
 
   getResultWithAlertParams(userId: string, alertParams: string[]) : Observable<any> {
     return this._http.get(this.baseUrlResultParams+"?user="+userId+"&params="+alertParams)
+      .map((r) => r.json());
+  }
+
+  getResultForChangeDelivery(userId: string, notificationId: number, alertParams: string[],
+                            notificationFeature: string, ranking: number) : Observable<any> {
+    return this._http.get(this.baseUrlResultChangeDelivery+"?user="+userId+"&notificationId="+notificationId
+      +"&ruleParams="+alertParams+"&notificationFeature="+notificationFeature+"&ranking="+ranking)
       .map((r) => r.json());
   }
 

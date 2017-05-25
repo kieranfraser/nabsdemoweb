@@ -14,6 +14,7 @@ import {
 } from "../services/sim-service";
 
 declare var RGraph: any;
+declare var Highcharts: any;
 
 import {AngularFire, AuthProviders, AuthMethods, FirebaseListObservable} from 'angularfire2';
 import {FirebaseObjectObservable} from "angularfire2/index";
@@ -97,11 +98,13 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
   private resultLabels = ["now", "v. soon", "soon", "later", "m. later"];
   private resultRankings = [10, 8, 6, 4, 2];
 
-  private changeDelGraph1Labels = ["sender", "subject", "app", "result"];
-  private changeDelGraph1Data = [5, 5, 5, 6];
+  private changeDelGraph1Labels: string[] = ["sender", "subject", "app", "result"];
+  private changeDelGraph1Data: number[] = [5, 5, 5, 6];
 
-  private selectedFeature;
-  private selectedTime;
+  private selectedFeature: string = "sender";
+  private selectedTime: string = "sooner";
+
+  private resultLineGraph = null;
 
   private view: string;
 
@@ -129,14 +132,11 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
     this.synth = window.speechSynthesis;
     var voices = this.synth.getVoices();
     this.voice = voices[3];
-
-    var m = new Message(1, "first message", "Kieran", "12:30", "imagesrc");
-    this.messages.push(m);
   }
 
   ngOnInit() {
     console.log("init");
-    this.view = "normal";
+    this.view = "controlPanel";
     if(this.selectedUser==null){
       this.router.navigate(['../']);
     }
@@ -161,7 +161,6 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
       this.userMessageInput.nativeElement.focus();
     } catch(err){}
     if(this.view == "controlPanel"){
-      this.svgGraph();
     }
   }
 
@@ -188,112 +187,6 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
       return true;
     else
       return false;
-  }
-
-  /**
-   * Initialization of the interactive graph
-   */
-  svgGraph(){
-    var data = this.subjectRankings;
-
-    var line = new RGraph.Line({
-      id: 'cvsSubject',
-      data: this.changeDelGraph1Data,
-      options: {
-        textAccessible: true,
-        labels: this.changeDelGraph1Labels,
-        adjustable: true,
-        gutterLeft: 25,
-        gutterRight: 25,
-        gutterTop: 50,
-        gutterBottom: 25,
-        numyticks: 10,
-        ylabels: true,
-        xlabels: true,
-        labelsOffsetx: 5,
-        labelsOffsety: 5
-      }
-    }).draw().on('onadjustend', function (obj)
-    {
-      this.changeDelGraph1Data = obj.data;
-    });
-
-    /*var barSubject = new RGraph.Bar({
-      id: 'cvsSubject',
-      data: this.changeDelGraph1Data,
-      options: {
-        labels: this.changeDelGraph1Labels,
-        textAccessible: true,
-        adjustable: true,
-        numyticks: 10,
-        ylabels: true,
-        ymax: 10,
-        shadowOffsetx: 1,
-        shadowOffsety: 1,
-        shadowBlur: 5,
-        gutterLeft: 5,
-        gutterRight: 5,
-        gutterTop: 50,
-        gutterBottom: 5,
-        ymin: 0.1,
-        scaleRound: false,
-      }
-    }).draw().on('onadjustend', function (obj)
-    {
-      this.changeDelGraph1Data = obj.data;
-    });*/
-
-    /*var barSender = new RGraph.Bar({
-      id: 'cvsSender',
-      data: data,
-      options: {
-        labels: this.subjectLabels,
-        textAccessible: true,
-        adjustable: true,
-        numyticks: 10,
-        ylabels: true,
-        ymax: 10,
-        shadowOffsetx: 1,
-        shadowOffsety: 1,
-        shadowBlur: 5,
-        gutterLeft: 5,
-        gutterRight: 5,
-        gutterTop: 50,
-        gutterBottom: 5,
-        ymin: 0.1,
-        scaleRound: false,
-      }
-    }).draw().on('onadjustend', function (obj)
-    {
-      console.log(obj.data);
-      this.subjectRankings = obj.data;
-    });
-
-    var barApp = new RGraph.Bar({
-      id: 'cvsApp',
-      data: data,
-      options: {
-        labels: this.subjectLabels,
-        textAccessible: true,
-        adjustable: true,
-        numyticks: 10,
-        ylabels: true,
-        ymax: 10,
-        shadowOffsetx: 1,
-        shadowOffsety: 1,
-        shadowBlur: 5,
-        gutterLeft: 5,
-        gutterRight: 5,
-        gutterTop: 50,
-        gutterBottom: 5,
-        ymin: 0.1,
-        scaleRound: false,
-      }
-    }).draw().on('onadjustend', function (obj)
-    {
-      console.log(obj.data);
-      this.subjectRankings = obj.data;
-    });*/
   }
 
   /**
@@ -387,8 +280,6 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
       .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
       .subscribe((allResults)=> {
         this.allResults = allResults;
-        console.log("all results");
-        console.log(this.allResults);
       });
   }
 
@@ -451,10 +342,11 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
   }
 
   /**
-   * Inits the secondary control modal (from within the single notification view.
+   * Closes the control panel view
    */
-  initControl(){
-    console.log("init the controls");
+  closeControl(){
+    this.view = 'normal';
+    this.showChat = false;
   }
 
   /**
@@ -538,7 +430,15 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
             this.lgModalNotifDetail.hide();
             //this.lgModalSingleControl.show();
             this.view = "controlPanel";
+            this.selectedTime = response.context.delivery_time;
+            this.selectedFeature = response.context.notification_feature;
             break;
+            /*if(this.resultLineGraph == null){
+              setTimeout(function () {
+                this.svgGraph();
+              }.bind(this), 100);
+              break;
+            }*/
         }
         // open up the control panel (for change delivery)
 
