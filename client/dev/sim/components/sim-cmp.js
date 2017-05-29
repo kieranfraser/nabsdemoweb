@@ -72,11 +72,11 @@ var SimCmp = (function () {
         this.synth = window.speechSynthesis;
         var voices = this.synth.getVoices();
         this.voice = voices[3];
+        this.view = "normal";
     }
     SimCmp.prototype.ngOnInit = function () {
         var _this = this;
-        console.log("init");
-        this.view = "controlPanel";
+        this.controlType = '2';
         if (this.selectedUser == null) {
             this.router.navigate(['../']);
         }
@@ -100,10 +100,7 @@ var SimCmp = (function () {
             this.userMessageInput.nativeElement.focus();
         }
         catch (err) { }
-        if (this.view == "controlPanel") {
-        }
     };
-    SimCmp.prototype.ngAfterViewInit = function () { };
     /**
      * Toggle the chat box in and out of view depending on modal selected.
      */
@@ -211,6 +208,8 @@ var SimCmp = (function () {
         this.simService
             .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
             .subscribe(function (allResults) {
+            console.log('New results');
+            console.log(allResults);
             _this.allResults = allResults;
         });
     };
@@ -329,7 +328,10 @@ var SimCmp = (function () {
             switch (action) {
                 case "open_control_panel":
                     _this.lgModalNotifDetail.hide();
-                    _this.lgModalSingleControl.show();
+                    _this.view = "controlPanel";
+                    _this.selectedTime = response.context.delivery_time;
+                    _this.selectedFeature = response.context.notification_feature;
+                    break;
             }
             // open up the control panel (for change delivery)
             // else
@@ -353,7 +355,6 @@ var SimCmp = (function () {
             switch (action) {
                 case "open_control_panel":
                     _this.lgModalNotifDetail.hide();
-                    //this.lgModalSingleControl.show();
                     _this.view = "controlPanel";
                     _this.selectedTime = response.context.delivery_time;
                     _this.selectedFeature = response.context.notification_feature;
@@ -363,23 +364,6 @@ var SimCmp = (function () {
             // else
             _this.messages.push(new message_1.Message(_this.messageNumber++, response.text, NABS_AUTHOR, Date.now().toString(), "img"));
         });
-    };
-    /* Change delivery functionality */
-    SimCmp.prototype.changeDeliveryAction = function (context, feature, delivery) {
-        var finished = false;
-        while (!finished) {
-            // the array value for the notif feature passed
-        }
-    };
-    SimCmp.prototype.valueForFeature = function (feature) {
-        switch (feature) {
-            case "sender":
-                return this.selectedNotification.sender;
-            case "subject":
-                return this.selectedNotification.subject;
-            case "app":
-                return this.selectedNotification.app;
-        }
     };
     return SimCmp;
 }());

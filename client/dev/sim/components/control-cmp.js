@@ -15,9 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var sim_service_1 = require("../services/sim-service");
 var ControlCmp = (function () {
-    function ControlCmp(simService) {
+    function ControlCmp(simService, zone) {
         this.simService = simService;
-        this.rankingValues = ['now', 'very soon', 'soon', 'later', 'much later'];
+        this.zone = zone;
+        this.rankingValues = ['much later', 'later', 'soon', 'very soon', 'now'];
         this.finishedReason = null;
         this.originalResult = null;
         this.originalNotification = null;
@@ -25,27 +26,33 @@ var ControlCmp = (function () {
         this.currentRanking = null;
         this.finished = false;
         this.resultGraph = null;
+        this.chart = null;
+        this.highlight = '';
     }
     ControlCmp.prototype.ngOnInit = function () {
-        //this.svgGraph();
-        console.log(this.labels);
-        console.log(this.data);
-        console.log(this.selectedNotification);
-        console.log(this.deliveryDirection);
-        console.log(this.notificationFeature);
-        console.log('on init');
         this.finishedReason = null;
         this.originalResult = this.result;
         this.originalNotification = this.selectedNotification;
         this.getRankingsFromNotification();
-        console.log(this.data);
         var i = this.labels.indexOf(this.notificationFeature);
         this.currentRanking = this.data[i];
     };
-    ControlCmp.prototype.ngAfterViewChecked = function () { };
+    /**
+     * Initialize the charts once the view appears.
+     */
     ControlCmp.prototype.ngAfterViewInit = function () {
-        this.svgGraph();
+        if (this.controlType == '1') {
+            this.initCharts1();
+        }
+        if (this.controlType == '2') {
+            this.initCharts2();
+        }
     };
+    /**
+     * Get the ranking values and add them to the data array to be
+     * passed to the charts. The resultRanking is calculated based on
+     * it's position in the rankingValues array (which is ordinal).
+     */
     ControlCmp.prototype.getRankingsFromNotification = function () {
         if (this.selectedNotification != null) {
             var resultRanking = (this.rankingValues.indexOf(this.originalResult) * 2) + 2;
@@ -53,10 +60,10 @@ var ControlCmp = (function () {
         }
     };
     /**
-     * Initialization of the interactive graph
+     * Chart options
      */
-    ControlCmp.prototype.svgGraph = function () {
-        Highcharts.chart('rankingChart', {
+    ControlCmp.prototype.initCharts1 = function () {
+        this.resultGraph = Highcharts.chart('rankingChart', {
             title: {
                 text: 'Ranking Control'
             },
@@ -69,7 +76,9 @@ var ControlCmp = (function () {
             yAxis: {
                 title: {
                     text: 'Importance (1-10)'
-                }
+                },
+                max: 10,
+                tickInterval: 1
             },
             plotOptions: {
                 line: {
@@ -135,6 +144,165 @@ var ControlCmp = (function () {
                 }]
         });
     };
+    /**
+     * Subject Ranking chart
+     */
+    ControlCmp.prototype.initCharts2 = function () {
+        this.chart = Highcharts.chart('container-ranking', {
+            chart: {
+                zoomType: 'xy'
+            },
+            title: {
+                text: 'Notification Delivery Control'
+            },
+            xAxis: [{
+                    categories: (function () { return this.getCategories(); }.bind(this))(),
+                    crosshair: true
+                }],
+            yAxis: [{
+                    labels: {
+                        format: '{value}',
+                        style: {
+                            color: Highcharts.getOptions().colors[2]
+                        }
+                    },
+                    title: {
+                        text: 'Notifications',
+                        style: {
+                            color: Highcharts.getOptions().colors[2]
+                        }
+                    },
+                    opposite: true
+                }, {
+                    gridLineWidth: 0,
+                    title: {
+                        text: 'Ranking',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    labels: {
+                        format: '{value}',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    }
+                }],
+            tooltip: {
+                shared: true
+            },
+            plotOptions: {
+                series: {
+                    point: {
+                        events: {
+                            drag: function (e) {
+                            },
+                            drop: function (e) {
+                                this.updatedate(this.category, e.y);
+                            }.bind(this)
+                        }
+                    },
+                    stickyTracking: false
+                }
+            },
+            series: [{
+                    name: 'Family',
+                    type: 'column',
+                    yAxis: 1,
+                    data: (function () { return this.getSenderRankings(0); }.bind(this))(),
+                    draggableY: true,
+                    yDecimals: 0,
+                    dragPrecisionY: 1,
+                    dragMinY: 0
+                }, {
+                    name: 'Friends',
+                    type: 'column',
+                    yAxis: 1,
+                    data: (function () { return this.getSenderRankings(1); }.bind(this))(),
+                    draggableY: true,
+                    yDecimals: 0,
+                    dragPrecisionY: 1,
+                    dragMinY: 0
+                },
+                {
+                    name: 'colleagues',
+                    type: 'column',
+                    yAxis: 1,
+                    data: (function () { return this.getSenderRankings(2); }.bind(this))(),
+                    draggableY: true,
+                    yDecimals: 0,
+                    dragPrecisionY: 1,
+                    dragMinY: 0
+                }, {
+                    name: 'Stranger',
+                    type: 'column',
+                    yAxis: 1,
+                    data: (function () { return this.getSenderRankings(3); }.bind(this))(),
+                    draggableY: true,
+                    yDecimals: 0,
+                    dragPrecisionY: 1,
+                    dragMinY: 0
+                }, {
+                    name: 'Immediate Notifications',
+                    type: 'spline',
+                    data: (function () { return this.getImmediateNotifications(); }.bind(this))(),
+                    tooltip: {
+                        valueSuffix: ' Notifications'
+                    }
+                },
+                {
+                    name: 'Notifications delayed',
+                    type: 'spline',
+                    data: (function () { return this.getDelayedNotifications(); }.bind(this))(),
+                    tooltip: {
+                        valueSuffix: ' Notifications'
+                    }
+                }]
+        });
+    };
+    /**
+     * Get new subject rankings and refire using these params
+     * in the callback - recalc the immediate/delayed notifications and set
+     * to chart values
+     *
+     * @param category
+     * @param value
+     */
+    ControlCmp.prototype.updatedate = function (category, value) {
+        this.chart.series[4].setData(this.getUpdatedImmediateNotifications(category, value));
+        this.chart.series[5].setData(this.getUpdatedDelayedNotifications(category, value));
+    };
+    ControlCmp.prototype.getSenderRankings = function (i) {
+        var rankings = [9, 7, 5, 2];
+        var requiredRanking = [rankings[i]];
+        return requiredRanking;
+    };
+    ControlCmp.prototype.getImmediateNotifications = function () {
+        //call to fetch the data for the user and return as follows
+        return [null, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6];
+    };
+    ControlCmp.prototype.getDelayedNotifications = function () {
+        //call to fetch the data for the user and return as follows
+        return [null, 5.9, 6.5, 4.5, 8.2, 2.5, 5.2, 6.5, 3.3, 8.3, 3.9, 7.6];
+    };
+    ControlCmp.prototype.getCategories = function () {
+        return ['Sender', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    };
+    ControlCmp.prototype.getUpdatedImmediateNotifications = function (senderType, value) {
+        //update the ranking and fetch the new data for the user and return as follows
+        return [null, 16.9, 19.5, 24.5, 28.2, 31.5, 35.2, 36.5, 33.3, 28.3, 23.9, 19.6];
+    };
+    ControlCmp.prototype.getUpdatedDelayedNotifications = function (senderType, value) {
+        //update the ranking and fetch the new data for the user and return as follows
+        return [null, 4.9, 16.5, 17.5, 18.2, 2.5, 15.2, 26.5, 13.3, 5.3, 1.9, 17.6];
+    };
+    /**
+     * Prepares the event data surrounding a notification for
+     * inclusion in the bar chart. i.e. counts how many of the
+     * events are relevant to the notification attribute.
+     * @returns {any}
+     */
     ControlCmp.prototype.prepEventData = function () {
         var senderCount = 0;
         var subjectCount = 0;
@@ -154,16 +322,19 @@ var ControlCmp = (function () {
             return [0, 0];
     };
     /**
-     * Run changes to the notification until the desired value is met.
+     * Evaluate the notification by changing the ranking for
+     * user stipulated notification attribute.
+     * If the change in ranking meets the user's preference (sooner
+     * or later than original result) then finish and present the result.
+     * If the ranking value hits the ground or the ceiling - decide which
+     * other attribute may change the delivery to suit the user's needs.
+     * Present the user with the findings.
      */
     ControlCmp.prototype.runChanges = function () {
         var _this = this;
-        console.log("in run changes");
+        this.highlight = '';
         if (!this.finished) {
-            console.log("in loop");
-            console.log("current ranking: " + this.currentRanking);
             if (this.deliveryDirection == 'sooner') {
-                console.log("in sooner");
                 var checkSooner = this.currentRanking + 1;
                 if (checkSooner < 10) {
                     this.currentRanking += 1;
@@ -176,7 +347,6 @@ var ControlCmp = (function () {
                 }
             }
             else {
-                console.log("in later");
                 var checkLater = this.currentRanking - 1;
                 if (checkLater > 1) {
                     this.currentRanking -= 1;
@@ -187,25 +357,28 @@ var ControlCmp = (function () {
                     this.finished = true;
                 }
             }
-            this.updateSelectedNotification(this.currentRanking);
-            console.log("in finishedReason");
             this.simService
                 .getResultForChangeDelivery(this.user.id, this.selectedNotification.id, this.params, this.notificationFeature, this.currentRanking)
                 .subscribe(function (result) {
-                _this.newResult = result.result;
                 if (_this.originalResult != result.result) {
                     _this.finished = true;
                 }
-                _this.runChanges();
+                setTimeout(function () {
+                    this.updateUI(result.result);
+                }.bind(_this), 2000);
             });
         }
         else {
             this.finished = false;
             this.finishedReason = null;
-            console.log("final ranking " + this.currentRanking);
         }
     };
-    ControlCmp.prototype.checkFinished = function () { };
+    /**
+     * Updates the selectedNotification value so the changes
+     * are reflected in the table the user is viewing.
+     * @param ranking - the notification attribute value which is being
+     * updated
+     */
     ControlCmp.prototype.updateSelectedNotification = function (ranking) {
         switch (this.notificationFeature) {
             case "sender":
@@ -220,9 +393,27 @@ var ControlCmp = (function () {
         }
         var i = this.labels.indexOf(this.notificationFeature);
         this.data[i] = this.currentRanking;
-        setTimeout(function () {
-            this.svgGraph();
-        }.bind(this), 2000);
+    };
+    /**
+     * Update the graphs with the current iteration of "runChanges" values.
+     * @param result - the new delivery result for this notification.
+     */
+    ControlCmp.prototype.updateUI = function (result) {
+        this.updateSelectedNotification(this.currentRanking);
+        var i = this.labels.indexOf(this.notificationFeature);
+        var resultRanking = (this.rankingValues.indexOf(result) * 2) + 2;
+        this.resultGraph.series[0].data[i].update(this.currentRanking);
+        this.resultGraph.series[0].data[3].update(resultRanking);
+        this.runChanges();
+        this.newResult = result;
+        /*this.highlight = this.notificationFeature;
+        this.wobbleState = "active";*/
+    };
+    ControlCmp.prototype.reset = function () {
+        var _this = this;
+        this.zone.run(function () {
+            _this.wobbleState = "inactive";
+        });
     };
     return ControlCmp;
 }());
@@ -262,12 +453,28 @@ __decorate([
     core_1.Input(),
     __metadata("design:type", Array)
 ], ControlCmp.prototype, "params", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", String)
+], ControlCmp.prototype, "controlType", void 0);
 ControlCmp = __decorate([
     core_1.Component({
         selector: "control-cmp",
         templateUrl: "sim/templates/control.html",
-        styleUrls: ["sim/styles/control.css"]
+        styleUrls: ["sim/styles/control.css"],
+        animations: [
+            core_1.trigger('tada', [
+                core_1.transition('inactive => active', core_1.animate(1000, core_1.keyframes([
+                    core_1.style({ transform: 'translate3d(-25%, 0, 0) rotate3d(0, 0, 1, -5deg)', offset: .15 }),
+                    core_1.style({ transform: 'translate3d(20%, 0, 0) rotate3d(0, 0, 1, 3deg)', offset: .30 }),
+                    core_1.style({ transform: 'translate3d(-15%, 0, 0) rotate3d(0, 0, 1, -3deg)', offset: .45 }),
+                    core_1.style({ transform: 'translate3d(10%, 0, 0) rotate3d(0, 0, 1, 2deg)', offset: .60 }),
+                    core_1.style({ transform: 'translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -1deg)', offset: .75 }),
+                    core_1.style({ transform: 'none', offset: 1 }),
+                ]))),
+            ])
+        ]
     }),
-    __metadata("design:paramtypes", [sim_service_1.SimService])
+    __metadata("design:paramtypes", [sim_service_1.SimService, core_1.NgZone])
 ], ControlCmp);
 exports.ControlCmp = ControlCmp;

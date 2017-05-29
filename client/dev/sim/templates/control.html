@@ -1,12 +1,12 @@
-<div class="container" style="min-height: 98vh; background-color: white; width: 100%">
-  <div class="row" *ngIf="newResult != null">
-    <h2>New Result: {{newResult}}</h2>
-  </div>
+<div *ngIf="controlType == 1" class="container" style="min-height: 98vh; background-color: white; width: 100%">
   <div class="row" *ngIf="finishedReason != null">
     <h2>Reason: {{finishedReason}}</h2>
   </div>
   <div class="row">
     <button style="margin-top: 20px;" type="button" class="btn btn-success" (click)="runChanges()">Run</button>
+  </div>
+  <div class="row">
+    <h4>Original Result: {{originalResult}}</h4>
   </div>
   <div class="row">
     <table class="table">
@@ -24,29 +24,64 @@
       </thead>
       <tbody>
       <tr>
-        <td>{{selectedNotification?.id}}</td>
-        <td>{{selectedNotification?.date | date:'MM/dd/yy h:mm a'}}</td>
-        <td>{{selectedNotification?.sender}}</td>
-        <td>{{selectedNotification?.senderRank}}</td>
-        <td>{{selectedNotification?.subject.subject}}</td>
-        <td>-</td>
-        <td>{{selectedNotification?.app.name}}</td>
-        <td>{{selectedNotification?.appRank}}</td>
+        <td>{{originalNotification?.id}}</td>
+        <td>{{originalNotification?.date | date:'MM/dd/yy h:mm a'}}</td>
+        <td>{{originalNotification?.sender}}</td>
+        <td>{{originalNotification?.senderRank}}</td>
+        <td>{{originalNotification?.subject.subject}}</td>
+        <td>{{originalNotification?.subject.subjectRank}}</td>
+        <td>{{originalNotification?.app.name}}</td>
+        <td>{{originalNotification?.appRank}}</td>
       </tr>
       </tbody>
     </table>
   </div>
   <div class="row">
     <div class="col-md-6">
-      <!--<div style="padding: 50px; display: inline-block; background-color: white;">
-        <canvas id="cvsRankings" width="300" height="250">[No canvas support]</canvas>
-      </div>-->
-      <div id="rankingChart" style="width:100%; height:400px;"></div>
+      <div id="rankingChart" style="width:100%; height:250px;"></div>
     </div>
     <div class="col-md-6">
-      <div style="padding: 50px; display: inline-block; background-color: white;">
-        <div id="eventChart" style="width:100%; height:400px;"></div>
-      </div>
+      <div id="eventChart" style="width:100%; height:250px;"></div>
     </div>
+  </div>
+  <div class="row">
+    <!--<h4 [@wobble]="wobbleState" (@wobble.done)="reset()">New Result: {{newResult!=null?newResult:"not calculated"}}</h4>-->
+    <h4>New Result: {{newResult!=null?newResult:"not calculated"}}</h4>
+  </div>
+  <div class="row">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Id</th>
+        <th>Delivered</th>
+        <th>Sender</th>
+        <th>Rank</th>
+        <th>Subject</th>
+        <th>Rank</th>
+        <th>App</th>
+        <th>Rank</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>{{newResult!=null?selectedNotification?.id:"-"}}</td>
+        <td>{{newResult!=null?(selectedNotification?.date | date:'MM/dd/yy h:mm a'):"-"}}</td>
+        <td>{{newResult!=null?selectedNotification?.sender:"-"}}</td>
+        <td [ngClass]="{'animate tada infinite': highlight == 'sender'}">{{newResult!=null?selectedNotification?.senderRank:"-"}}</td>
+        <td>{{newResult!=null?selectedNotification?.subject.subject:"-"}}</td>
+        <td [ngClass]="{'animate tada infinite': highlight == 'subject'}">{{newResult!=null?selectedNotification?.subjectRank:"-"}}</td>
+        <td>{{newResult!=null?selectedNotification?.app.name:"-"}}</td>
+        <td [ngClass]="{'animate tada infinite': highlight == 'app'}">{{newResult!=null?selectedNotification?.appRank:"-"}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div *ngIf="controlType == 2" class="container" style="min-height: 98vh;  min-height: 98vh;
+         background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; overflow-x: scroll; overflow-x: hidden; width: 100%">
+  <div id="container-ranking" style="height: 400px"></div>
+  <div id="load-div" class="ui-widget">
+    <button id="update-sender-rank">Save</button>
   </div>
 </div>

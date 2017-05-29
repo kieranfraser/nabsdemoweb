@@ -30,7 +30,7 @@
               <h4>Select a user</h4>
             </div>
             <div *ngIf="selectedUser!=null" style="text-align: center; margin-top: 20px;">
-              <img src="./common/dist/img/{{selectedImage}}.png" style="max-width: 100%;" alt="No user selected.">
+              <img src="./common/dist/img/{{selectedImage}}.png" class="animated fadeInLeft" style="max-width: 100%;" alt="No user selected.">
               <div style="color: white; margin-top: 20px"><h4>Selected User</h4></div>
               <button style="margin-top: 20px;" type="button" class="btn btn-primary" [routerLink]="['../simulation']">Simulate</button>
             </div>
@@ -57,7 +57,7 @@
         </div>
 
         <div *ngIf="users?.length > 0" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center">
-          <div class="box">
+          <div class="box" style="min-height: 98vh; background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; ">
             <!-- HEADER -->
             <!-- CAROUSEL -->
             <section>
@@ -72,27 +72,28 @@
               </div>-->
               <article *ngFor="let user of users; let i = index" class="line">
                 <div class="margin" style="margin-bottom: 20px; margin-top: 20px;">
-                  <div class="s-12 m-12 l-2" style="text-align: center">
-                    <img src="./common/dist/img/{{i}}.png" class="imgBtn" style="max-width: 100%;" alt="icon" (click)="selectUser(user, i)">
+                  <div class="s-12 m-12 l-2 animated fadeInLeft" style="text-align: center">
+                    <img src="./common/dist/img/{{i}}.png" class="imgBtn" style="max-width: 100%;
+                    box-shadow: 10px 10px 5px darkgrey; border-radius: 100%;" alt="icon" (click)="selectUser(user, i)">
                   </div>
-                  <div class="s-12 m-12 l-10">
+                  <div class="s-12 m-12 l-10 animated fadeInRight">
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
-                              style="background-color: white"
+                              style="background-color: white; box-shadow: 5px 5px 5px darkgrey;"
                               (click)="lgModalInfo.show(); selectUser(user, i)"><img src="./common/dist/img/info.png"/></button>
-                      <div style="display: block; text-align: center;;">{{user.id}}</div>
+                      <div style="display: block; text-align: center; margin-top: 7px;"><strong>{{user.id}}</strong></div>
                     </div>
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
-                              style="background-color: white"
+                              style="background-color: white; box-shadow: 5px 5px 5px darkgrey;"
                               (click)="lgModalNotif.show(); selectUser(user, i)"><img src="./common/dist/img/notification.png"/></button>
-                      <div style="display: block; text-align: center;;">{{user.notifications?.length}}</div>
+                      <div style="display: block; text-align: center; margin-top: 7px;"><strong>{{user.notifications?.length}}</strong></div>
                     </div>
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
-                              style="background-color: white"
+                              style="background-color: white; box-shadow: 5px 5px 5px darkgrey;"
                               (click)="lgModalEvent.show(); selectUser(user, i)"><img src="./common/dist/img/calendar.png"/></button>
-                      <div style="display: block; text-align: center;;">{{user.events?.length}}</div>
+                      <div style="display: block; text-align: center; margin-top: 7px;"><strong>{{user.events?.length}}</strong></div>
                     </div>
                   </div>
 

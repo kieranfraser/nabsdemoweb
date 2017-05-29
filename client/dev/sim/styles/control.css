@@ -1,0 +1,84 @@
+.row {
+   margin-right: -0px;
+   margin-left: -0px;
+}
+
+.emphasis {
+  color: orangered;
+}
+
+#container
+{
+  width: 98%;
+  margin: 10px auto;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid gray;
+  line-height: 130%;
+}
+
+#container-c1 {
+  min-width: 320px;
+  max-width: 800px;
+  height: 220px;
+  margin: 0 auto;
+}
+#container-c2 {
+  min-width: 320px;
+  max-width: 800px;
+  height: 220px;
+  margin: 0 auto;
+}
+#container-c3 {
+  min-width: 320px;
+  max-width: 800px;
+  height: 220px;
+  margin: 0 auto;
+}
+
+/*</style>
+<!-- http://doc.jsfiddle.net/use/hacks.html#css-panel-hack -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>*/
+
+ #top
+ {
+   padding: .5em;
+   background-color: #ddd;
+   border-bottom: 1px solid gray;
+ }
+
+#top h1
+{
+  padding: 0;
+  margin: 0;
+}
+
+#leftnav
+{
+  float: left;
+  width: 160px;
+  margin: 0;
+  padding: 1em;
+}
+
+#content
+{
+  margin-left: 33%;
+  border-left: 1px solid gray;
+  padding: 1em;
+  max-width: 36em;
+}
+
+#footer
+{
+  clear: both;
+  margin: 0;
+  padding: .5em;
+  color: #333;
+  background-color: #ddd;
+  border-top: 1px solid gray;
+}
+
+#leftnav p { margin: 0 0 1em 0; }
+#content h2 { margin: 0 0 .5em 0; }

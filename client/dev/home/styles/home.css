@@ -196,4 +196,5 @@ table {
 
 .imgBtn:hover {
   cursor: pointer;
+  border: 2px solid transparent;
 }

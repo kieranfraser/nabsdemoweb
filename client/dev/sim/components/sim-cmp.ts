@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit, ViewChild, AfterViewChecked, AfterViewInit
+  OnInit, ViewChild, AfterViewChecked
 } from "@angular/core";
 
 import {
@@ -35,7 +35,7 @@ const USER_AUTHOR: string = "Me";
   templateUrl: "sim/templates/sim.html",
   styleUrls: ["sim/styles/sim.css", "sim/styles/timeline.css", "sim/styles/chat.css"]
 })
-export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
+export class SimCmp implements OnInit, AfterViewChecked{
   title: string = "NAbs";
 
   /**
@@ -107,6 +107,7 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
   private resultLineGraph = null;
 
   private view: string;
+  private controlType: string;
 
   // Phase of questioning
   /* Step 1: ask if the notification is correct
@@ -132,11 +133,11 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
     this.synth = window.speechSynthesis;
     var voices = this.synth.getVoices();
     this.voice = voices[3];
+    this.view = "normal";
   }
 
   ngOnInit() {
-    console.log("init");
-    this.view = "controlPanel";
+    this.controlType = '2';
     if(this.selectedUser==null){
       this.router.navigate(['../']);
     }
@@ -160,11 +161,8 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
       this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
       this.userMessageInput.nativeElement.focus();
     } catch(err){}
-    if(this.view == "controlPanel"){
-    }
   }
 
-  ngAfterViewInit(){}
   /**
    * Toggle the chat box in and out of view depending on modal selected.
    */
@@ -279,6 +277,8 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
     this.simService
       .getResultWithAlertParams(this.selectedUser.id, this.alertParams)
       .subscribe((allResults)=> {
+        console.log('New results');
+        console.log(allResults);
         this.allResults = allResults;
       });
   }
@@ -402,7 +402,10 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
         switch(action){
           case "open_control_panel":
             this.lgModalNotifDetail.hide();
-            this.lgModalSingleControl.show();
+            this.view = "controlPanel";
+            this.selectedTime = response.context.delivery_time;
+            this.selectedFeature = response.context.notification_feature;
+            break;
         }
         // open up the control panel (for change delivery)
 
@@ -428,17 +431,10 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
         switch(action){
           case "open_control_panel":
             this.lgModalNotifDetail.hide();
-            //this.lgModalSingleControl.show();
             this.view = "controlPanel";
             this.selectedTime = response.context.delivery_time;
             this.selectedFeature = response.context.notification_feature;
             break;
-            /*if(this.resultLineGraph == null){
-              setTimeout(function () {
-                this.svgGraph();
-              }.bind(this), 100);
-              break;
-            }*/
         }
         // open up the control panel (for change delivery)
 
@@ -447,29 +443,5 @@ export class SimCmp implements OnInit, AfterViewChecked, AfterViewInit{
         this.messages.push(new Message(this.messageNumber++, response.text, NABS_AUTHOR, Date.now().toString(), "img"))
       });
   }
-
-  /* Change delivery functionality */
-
-  changeDeliveryAction(context: any, feature: string, delivery: string){
-    var finished = false;
-    while(!finished){
-      // the array value for the notif feature passed
-
-    }
-  }
-
-  valueForFeature(feature: string): string {
-    switch(feature){
-      case "sender":
-        return this.selectedNotification.sender;
-      case "subject":
-        return this.selectedNotification.subject;
-      case "app":
-        return this.selectedNotification.app;
-    }
-  }
-
-  /*  Actions  */
-
 
 }

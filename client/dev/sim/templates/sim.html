@@ -30,7 +30,7 @@
               <h4>Select a user:</h4>
             </div>
             <div *ngIf="selectedUser!=null && view == 'normal'" style="text-align: center; margin-top: 20px;">
-              <img src="./common/dist/img/{{selectedImage}}.png" style="max-width: 100%;" alt="No user selected.">
+              <img src="./common/dist/img/{{selectedImage}}.png" class="animated fadeInLeft" style="max-width: 100%;" alt="No user selected.">
               <div style="color: white; margin-top: 20px"><h4>Selected User</h4></div>
               <button style="margin-top: 20px;" type="button" class="btn btn-primary" (click)="switchUser()">Switch User</button>
               <button style="margin-top: 20px;" type="button" class="btn btn-success" (click)="fireAllParams()">Fire Again</button>
@@ -45,27 +45,30 @@
 
 
         <!-- RIGHT COLUMN -->
-        <div *ngIf="users?.length == 0" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden">
+        <div *ngIf="users?.length == 0" class="s-12 m-8 l-9" style="max-height: 98vh; min-height: 98vh;
+         background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; overflow-x: scroll; overflow-x: hidden">
           <div>
             <my-spinner [isRunning]="isRequesting"></my-spinner>
           </div>
         </div>
 
-        <div *ngIf="view == 'controlPanel'" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden">
+        <div *ngIf="view == 'controlPanel'" class="s-12 m-8 l-9" style="max-height: 98vh; min-height: 98vh;
+         background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; overflow-x: scroll; overflow-x: hidden">
           <control-cmp [data]="changeDelGraph1Data" [labels]="changeDelGraph1Labels"
                        [selectedNotification]="selectedNotification" [deliveryDirection]="selectedTime"
                        [notificationFeature]="selectedFeature"
                        [notificationEvents]="selectedNotificationEvents"
                        [result]="selectedResult"
                        [user]="selectedUser"
-                       [params]="alertParams" style="min-height: 98vh; background-color: white;">Control not working</control-cmp>
+                       [params]="alertParams"
+                       [controlType]="controlType" style="min-height: 98vh; background-color: white;">Control not working</control-cmp>
         </div>
 
-        <div *ngIf="view == 'normal'" class="s-12 m-8 l-9" style="max-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center;">
-          <div class="box" style="background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; padding: 0px">
+        <div *ngIf="view == 'normal'" class="s-12 m-8 l-9" style="max-height: 98vh; min-height: 98vh; overflow-x: scroll; overflow-x: hidden; text-align: center;">
+          <div class="box" style="background-image: url('./common/dist/img/swirl_pattern.png'); background-repeat: repeat; padding: 0px; min-height: 98vh;">
             <!-- HEADER -->
             <!-- CAROUSEL -->
-            <section *ngIf="selectedUser != null && alertParams != null && defaultParams!=null" style="background-color: rgba(0, 0, 0, 0.73); position: sticky; z-index: 1; top: 0; color: white;">
+            <section class="animated slideInDown" *ngIf="selectedUser != null && alertParams != null && defaultParams!=null" style="background-color: rgba(0, 0, 0, 0.73); position: sticky; z-index: 1; top: 0; color: white;">
               <article class="line">
                 <div class="margin" style="margin-bottom: 20px; margin-top: 20px;">
                   <div class="s-12 m-12 l-10" style="width: 100%; margin: 0 auto;">
@@ -86,7 +89,8 @@
                     </div>
                     <div style="display: inline-block; vertical-align: middle; margin-left: 20px;">
                       <button type="button" class="btn btn-info btn-lg btn-circle btn-xl"
-                              (click)="lgModalControl.show();" style="background-color: white"><img src="./common/dist/img/controls.png"/></button>
+                              (click)="view = 'controlPanel'; controlType = '2';" style="background-color: white"><img src="./common/dist/img/controls.png"/></button>
+                              <!--(click)="lgModalControl.show();"-->
                       <div *ngIf="checkCustomRules()" style="display: block; text-align: center; margin-top: 10px;">Custom</div>
                       <div *ngIf="!checkCustomRules()" style="display: block; text-align: center; margin-top: 10px;">Default</div>
                     </div>
@@ -126,7 +130,7 @@
               </article>
 
             </section>-->
-            <section id="timeline" *ngIf="selectedUser != null && allResults?.length > 0">
+            <section id="timeline" class="animated slideInUp" *ngIf="selectedUser != null && allResults?.length > 0">
               <article *ngFor="let result of allResults; let i = index">
                 <div [ngSwitch]="result?.result">
                   <button type="button" *ngSwitchCase="'now'" class="btn btn-info btn-lg btn-circle btn-xl"
@@ -163,7 +167,7 @@
 
           </div>
           <!-- FOOTER -->
-          <div class="box footer">
+          <!--<div class="box footer">
             <footer class="line">
               <div class="s-12 l-6">
                 <p>Copyright 2016, Vision Design - graphic zoo<br />The background image is purchased from Depositphotos. Do not use the image in your website.</p>
@@ -173,10 +177,11 @@
                 <a class="right" href="http://www.myresponsee.com" title="Responsee - lightweight responsive framework">Design and coding by Responsee Team</a>
               </div>
             </footer>
-          </div>
+          </div>-->
         </div>
       </div>
-      <div *ngIf="showChat" style="position: absolute; right: 10px; top: 5px; width: 16%; z-index: 1051 !important;">
+
+      <div *ngIf="showChat" class="animate fadeInDown" style="position: absolute; right: 10px; top: 5px; width: 16%; z-index: 1051 !important;">
         <div class="panel panel-primary">
           <div class="panel-heading">
             <span class="glyphicon glyphicon-comment"></span> Ask NAbs
