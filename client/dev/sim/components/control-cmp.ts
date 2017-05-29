@@ -77,6 +77,7 @@ export class ControlCmp implements OnInit, AfterViewInit {
       this.initCharts1();
     }
     if(this.controlType == '2') {
+      this.prepChart2Data();
       this.initCharts2();
     }
   }
@@ -315,6 +316,20 @@ export class ControlCmp implements OnInit, AfterViewInit {
     });
   }
 
+  private categories = [];
+  private subjectRankings = [];
+  private immediateNotifications = [];
+  private delayedNotifications = [];
+
+
+  prepChart2Data(){
+    console.log(this.user);
+    for(var n of this.user.notifications){
+      var d = new Date.parse(n.date);
+      console.log(d.getMonth());
+    }
+  }
+
   /**
    * Get new subject rankings and refire using these params
    * in the callback - recalc the immediate/delayed notifications and set
@@ -335,30 +350,36 @@ export class ControlCmp implements OnInit, AfterViewInit {
 }
 
   getImmediateNotifications() {
-  //call to fetch the data for the user and return as follows
-  return [null, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6];
-}
+    //call to fetch the data for the user and return as follows
+    return [null, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6];
+  }
 
   getDelayedNotifications() {
-  //call to fetch the data for the user and return as follows
-  return [null,  5.9, 6.5, 4.5, 8.2, 2.5, 5.2, 6.5, 3.3, 8.3, 3.9, 7.6];
-}
+    //call to fetch the data for the user and return as follows
+    return [null,  5.9, 6.5, 4.5, 8.2, 2.5, 5.2, 6.5, 3.3, 8.3, 3.9, 7.6];
+  }
 
+
+
+  /**
+   * Gets the months over the span of total notifications.
+   * @returns {string[]}
+     */
   getCategories() {
-  return ['Sender', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-}
+    return ['Subject', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  }
 
 
   getUpdatedImmediateNotifications(senderType, value) {
-  //update the ranking and fetch the new data for the user and return as follows
-  return [null, 16.9, 19.5, 24.5, 28.2, 31.5, 35.2, 36.5, 33.3, 28.3, 23.9, 19.6];
-}
+    //update the ranking and fetch the new data for the user and return as follows
+    return [null, 16.9, 19.5, 24.5, 28.2, 31.5, 35.2, 36.5, 33.3, 28.3, 23.9, 19.6];
+  }
 
   getUpdatedDelayedNotifications(senderType, value) {
-  //update the ranking and fetch the new data for the user and return as follows
-  return [null,  4.9, 16.5, 17.5, 18.2, 2.5, 15.2, 26.5, 13.3, 5.3, 1.9, 17.6];
-}
+    //update the ranking and fetch the new data for the user and return as follows
+    return [null,  4.9, 16.5, 17.5, 18.2, 2.5, 15.2, 26.5, 13.3, 5.3, 1.9, 17.6];
+  }
 
   /**
    * Prepares the event data surrounding a notification for

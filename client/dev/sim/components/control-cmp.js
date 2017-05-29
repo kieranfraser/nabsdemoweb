@@ -28,6 +28,10 @@ var ControlCmp = (function () {
         this.resultGraph = null;
         this.chart = null;
         this.highlight = '';
+        this.categories = [];
+        this.subjectRankings = [];
+        this.immediateNotifications = [];
+        this.delayedNotifications = [];
     }
     ControlCmp.prototype.ngOnInit = function () {
         this.finishedReason = null;
@@ -45,6 +49,7 @@ var ControlCmp = (function () {
             this.initCharts1();
         }
         if (this.controlType == '2') {
+            this.prepChart2Data();
             this.initCharts2();
         }
     };
@@ -260,6 +265,14 @@ var ControlCmp = (function () {
                 }]
         });
     };
+    ControlCmp.prototype.prepChart2Data = function () {
+        console.log(this.user);
+        for (var _i = 0, _a = this.user.notifications; _i < _a.length; _i++) {
+            var n = _a[_i];
+            var d = new Date.parse(n.date);
+            console.log(d.getMonth());
+        }
+    };
     /**
      * Get new subject rankings and refire using these params
      * in the callback - recalc the immediate/delayed notifications and set
@@ -285,8 +298,12 @@ var ControlCmp = (function () {
         //call to fetch the data for the user and return as follows
         return [null, 5.9, 6.5, 4.5, 8.2, 2.5, 5.2, 6.5, 3.3, 8.3, 3.9, 7.6];
     };
+    /**
+     * Gets the months over the span of total notifications.
+     * @returns {string[]}
+       */
     ControlCmp.prototype.getCategories = function () {
-        return ['Sender', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        return ['Subject', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     };
     ControlCmp.prototype.getUpdatedImmediateNotifications = function (senderType, value) {
