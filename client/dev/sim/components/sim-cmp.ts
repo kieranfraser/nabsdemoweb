@@ -71,15 +71,24 @@ export class SimCmp implements OnInit, AfterViewChecked{
   @ViewChild('userMessageInput') userMessageInput;
   @ViewChild('chatWindow') chatWindow;
 
-  private alertSenderInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
+  public static alertSenderInputValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
   "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
   "VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP"];
+  sendValues: string[] = ["NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP","NIP",
+    "IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT","IMPORTANT",
+    "VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP","VIP"];
 
-  private alertSubjectInputValues: string[] = ["NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP",
+  public static alertSubjectInputValues: string[] = ["NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP",
+    "NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP",
+    "NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP"];
+  subjValues: string[] = ["NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP",
     "NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP",
     "NIP","NIP","NIP","IMPORTANT","IMPORTANT","IMPORTANT","VIP","VIP","VIP"];
 
-  private alertAppInputValues: string[] = ["NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
+  public static alertAppInputValues: string[] = ["NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
+    "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
+    "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP"];
+  appValues: string[] = ["NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
     "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP",
     "NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP","NIP","IMPORTANT","VIP"];
 
@@ -284,6 +293,9 @@ export class SimCmp implements OnInit, AfterViewChecked{
   }
 
   setNotification(notification: any, result: string){
+    console.log(notification);
+    console.log(result);
+
     this.selectedNotification = notification;
     this.selectedResult = result;
     this.getNotificationEvents();
@@ -309,11 +321,25 @@ export class SimCmp implements OnInit, AfterViewChecked{
         this.selectedNotificationEvents = eventResults;
         /*for(var event of this.selectedNotificationEvents){
           var d = new Date(event.endDate);
-          event.endDate = d;
+          event.endDate = this.formatDate(d);
           d = new Date(event.startDate);
-          event.startDate = d;
+          event.startDate = this.formatDate(d);
         }*/
       });
+  }
+
+  formatDate(input){
+    var date = new Date(input*1000);
+// Hours part from the timestamp
+    var hours = date.getHours();
+// Minutes part from the timestamp
+    var minutes = "0" + date.getMinutes();
+// Seconds part from the timestamp
+    var seconds = "0" + date.getSeconds();
+
+// Will display time in 10:30:23 format
+    var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    return date;
   }
 
   /**
@@ -432,6 +458,7 @@ export class SimCmp implements OnInit, AfterViewChecked{
           case "open_control_panel":
             this.lgModalNotifDetail.hide();
             this.view = "controlPanel";
+            this.controlType= "1";
             this.selectedTime = response.context.delivery_time;
             this.selectedFeature = response.context.notification_feature;
             break;

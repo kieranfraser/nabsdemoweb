@@ -40,13 +40,13 @@ var SimCmp = (function () {
         this.selectedNotification = null;
         this.selectedNotificationEvents = null;
         this.selectedResult = null;
-        this.alertSenderInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
+        this.sendValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
             "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
             "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
-        this.alertSubjectInputValues = ["NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP",
+        this.subjValues = ["NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP",
             "NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP",
             "NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP"];
-        this.alertAppInputValues = ["NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
+        this.appValues = ["NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
             "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP"];
         this.alertOptions = ["NOW", "VERYSOON", "SOON", "LATER", "MUCHLATER"];
@@ -214,6 +214,8 @@ var SimCmp = (function () {
         });
     };
     SimCmp.prototype.setNotification = function (notification, result) {
+        console.log(notification);
+        console.log(result);
         this.selectedNotification = notification;
         this.selectedResult = result;
         this.getNotificationEvents();
@@ -238,11 +240,23 @@ var SimCmp = (function () {
             _this.selectedNotificationEvents = eventResults;
             /*for(var event of this.selectedNotificationEvents){
               var d = new Date(event.endDate);
-              event.endDate = d;
+              event.endDate = this.formatDate(d);
               d = new Date(event.startDate);
-              event.startDate = d;
+              event.startDate = this.formatDate(d);
             }*/
         });
+    };
+    SimCmp.prototype.formatDate = function (input) {
+        var date = new Date(input * 1000);
+        // Hours part from the timestamp
+        var hours = date.getHours();
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();
+        // Will display time in 10:30:23 format
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        return date;
     };
     /**
      * Resets the alert params to the default values.
@@ -356,6 +370,7 @@ var SimCmp = (function () {
                 case "open_control_panel":
                     _this.lgModalNotifDetail.hide();
                     _this.view = "controlPanel";
+                    _this.controlType = "1";
                     _this.selectedTime = response.context.delivery_time;
                     _this.selectedFeature = response.context.notification_feature;
                     break;
@@ -367,6 +382,15 @@ var SimCmp = (function () {
     };
     return SimCmp;
 }());
+SimCmp.alertSenderInputValues = ["NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP", "NIP",
+    "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT", "IMPORTANT",
+    "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP", "VIP"];
+SimCmp.alertSubjectInputValues = ["NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP",
+    "NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP",
+    "NIP", "NIP", "NIP", "IMPORTANT", "IMPORTANT", "IMPORTANT", "VIP", "VIP", "VIP"];
+SimCmp.alertAppInputValues = ["NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
+    "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP",
+    "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP", "NIP", "IMPORTANT", "VIP"];
 __decorate([
     core_1.ViewChild('lgModalSingleControl'),
     __metadata("design:type", Object)

@@ -26,6 +26,8 @@ export class SimService {
   private baseUrlResult = this.baseLocal+'/result';
   private baseUrlParams = this.baseLocal+'/params';
   private baseUrlResultParams = this.baseLocal+'/resultparams';
+  private baseUrlResultSubjectAlert = this.baseLocal+'/firesubjectalert';
+
   private baseUrlResultChangeDelivery = this.baseLocal+'/resultforchangedelivery';
   private baseUrlNotifEvents = this.baseLocal+'/notificationevents';
   private baseUrlBeginConvo = this.baseLocal+'/beginconvo';
@@ -67,6 +69,11 @@ export class SimService {
 
   continueConvoRequest(input: String, context: any) : Observable<any> {
       return this._http.post(this.baseUrlContinueConvo+"?input="+input, JSON.stringify(context))
+      .map((r) => r.json());
+  }
+
+  getResultsForSubectAlert(userId: string, alertParams: string[], rankings: number[]) : Observable<any> {
+    return this._http.get(this.baseUrlResultSubjectAlert+"?user="+userId+"&params="+alertParams+"&rankings="+rankings)
       .map((r) => r.json());
   }
 
